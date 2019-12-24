@@ -1,3 +1,4 @@
+# supports only visible transitions, and with arc weight equal to 1
 def ip(n, im, fm, st, row):
     if "</transition" in row:
         st[0] = False

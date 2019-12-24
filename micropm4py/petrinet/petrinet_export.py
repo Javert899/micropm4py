@@ -1,3 +1,4 @@
+# supports only visible transitions, and with arc weight equal to 1
 def export(net, im, fm):
     print("<?xml version='1.0' encoding='UTF-8'?>")
     print("<pnml>")
