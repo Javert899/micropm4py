@@ -1,3 +1,4 @@
+# RAN ON CORTEX M3, 64kb RAM
 # Supports only visible transitions, and with arc weight equal to 1. Supports duplicate transitions.
 def export(net, im, fm):
     print("<?xml version='1.0' encoding='UTF-8'?>")

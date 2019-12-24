@@ -1,3 +1,4 @@
+# RAN ON CORTEX M3, 64kb RAM
 def exec(p, m, a):
     for t in p[1]:
         if t[0] == a:
