@@ -1,3 +1,4 @@
+# Supports only visible transitions, and with arc weight equal to 1. Supports duplicate transitions.
 def export(net, im, fm, file_path):
     F = open(file_path, "w")
     F.write("<?xml version='1.0' encoding='UTF-8'?>\n")
@@ -6,7 +7,7 @@ def export(net, im, fm, file_path):
     F.write("<page id=\"n0\">\n")
     i = 0
     while i < len(net[0]):
-        F.write("<place id=\""+net[0][i]+"\">\n")
+        F.write("<place id=\"pl"+str(i)+"\">\n")
         F.write("<name>\n")
         F.write("<text>"+net[0][i]+"</text>\n")
         F.write("</name>\n")
@@ -19,23 +20,23 @@ def export(net, im, fm, file_path):
     a = 0
     i = 0
     while i < len(net[1]):
-        F.write("<transition id=\""+net[1][i][0]+"\">\n")
+        F.write("<transition id=\"tr"+str(i)+"\">\n")
         F.write("<name>\n")
         F.write("<text>"+net[1][i][0]+"</text>\n")
         F.write("</name>\n")
         F.write("</transition>\n")
         for p in net[1][i][1]:
             a = a + 1
-            F.write("<arc id=\"ac"+str(a)+"\" source=\""+net[0][p]+"\" target=\""+net[1][i][0]+"\"/>\n")
+            F.write("<arc id=\"ac"+str(a)+"\" source=\"pl"+str(p)+"\" target=\"tr"+str(i)+"\"/>\n")
         for p in net[1][i][2]:
             a = a + 1
-            F.write("<arc id=\"ac"+str(a)+"\" source=\""+net[1][i][0]+"\" target=\""+net[0][p]+"\"/>\n")
+            F.write("<arc id=\"ac"+str(a)+"\" source=\"tr"+str(i)+"\" target=\"pl"+str(p)+"\"/>\n")
         i = i + 1
     F.write("</page>\n")
     F.write("<finalmarkings>\n")
     F.write("<marking>\n")
     for p in fm:
-        F.write("<place idref=\""+net[0][p]+"\">\n")
+        F.write("<place idref=\"pl"+str(p)+"\">\n")
         F.write("<text>1</text>\n")
         F.write("</place>\n")
     F.write("</marking>\n")

@@ -1,4 +1,4 @@
-# supports only visible transitions, and with arc weight equal to 1
+# Supports only visible transitions, and with arc weight equal to 1. Supports duplicate transitions.
 def ip(n, im, fm, st, row):
     if "</transition" in row:
         st[0] = False

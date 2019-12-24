@@ -1,4 +1,4 @@
-# supports only visible transitions, and with arc weight equal to 1
+# Supports only visible transitions, and with arc weight equal to 1. Supports duplicate transitions.
 def export(net, im, fm):
     print("<?xml version='1.0' encoding='UTF-8'?>")
     print("<pnml>")
@@ -6,7 +6,7 @@ def export(net, im, fm):
     print("<page id=\"n0\">")
     i = 0
     while i < len(net[0]):
-        print("<place id=\""+net[0][i]+"\">")
+        print("<place id=\"pl"+str(i)+"\">")
         print("<name>")
         print("<text>"+net[0][i]+"</text>")
         print("</name>")
@@ -19,23 +19,23 @@ def export(net, im, fm):
     a = 0
     i = 0
     while i < len(net[1]):
-        print("<transition id=\""+net[1][i][0]+"\">")
+        print("<transition id=\"tr"+str(i)+"\">")
         print("<name>")
         print("<text>"+net[1][i][0]+"</text>")
         print("</name>")
         print("</transition>")
         for p in net[1][i][1]:
             a = a + 1
-            print("<arc id=\"ac"+str(a)+"\" source=\""+net[0][p]+"\" target=\""+net[1][i][0]+"\"/>")
+            print("<arc id=\"ac"+str(a)+"\" source=\"pl"+str(p)+"\" target=\"tr"+str(i)+"\"/>")
         for p in net[1][i][2]:
             a = a + 1
-            print("<arc id=\"ac"+str(a)+"\" source=\""+net[1][i][0]+"\" target=\""+net[0][p]+"\"/>")
+            print("<arc id=\"ac"+str(a)+"\" source=\"tr"+str(i)+"\" target=\"pl"+str(p)+"\"/>")
         i = i + 1
     print("</page>")
     print("<finalmarkings>")
     print("<marking>")
     for p in fm:
-        print("<place idref=\""+net[0][p]+"\">")
+        print("<place idref=\"pl"+str(p)+"\">")
         print("<text>1</text>")
         print("</place>")
     print("</marking>")
