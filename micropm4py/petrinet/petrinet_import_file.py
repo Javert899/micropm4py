@@ -1,5 +1,6 @@
 from micropm4py.petrinet import petrinet_import
 
+
 # Supports only visible transitions, and with arc weight equal to 1. Supports duplicate transitions.
 def imp_file(file_path):
     n = [[], []]

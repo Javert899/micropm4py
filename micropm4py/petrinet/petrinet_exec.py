@@ -18,6 +18,7 @@ def exec(p, m, a):
                     m[p] = m[p] + v
                 return m
 
+
 def ex_trace(p, m, fm, tr):
     for act in tr:
         m = exec(p, m, act)
@@ -25,7 +26,12 @@ def ex_trace(p, m, fm, tr):
             return False
     return m == fm
 
-if __name__ == "__main__":
+
+def main():
     p = [["source", "p1", "sink"], [["A", {0: 1}, {1: 1}], ["B", {1: 1}, {2: 1}]]]
     r = ex_trace(p, {0: 1}, {2: 1}, ["A", "B"])
     print(r)
+
+
+if __name__ == "__main__":
+    main()

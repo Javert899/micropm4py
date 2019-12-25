@@ -2,7 +2,7 @@
 def r(tr, p, on, row):
     if on == 2:
         if "concept:name" in row:
-            p.append(row.split("value=\"")[1].split("\"")[0])
+            p[1].append(row.split("value=\"")[1].split("\"")[0])
         elif "</event" in row:
             on = 1
     elif on == 1:
@@ -12,12 +12,15 @@ def r(tr, p, on, row):
             tr = p
             p = None
             on = 0
+        elif "concept:name" in row:
+            p[0] = row.split("value=\"")[1].split("\"")[0]
     else:
         tr = None
         if "<trace" in row:
-            p = []
+            p = ["", []]
             on = 1
     return tr, p, on
+
 
 def udf(dfg, tr):
     if len(tr) > 0:
@@ -25,7 +28,7 @@ def udf(dfg, tr):
         while i < len(tr):
             if not tr[i] in dfg[0]:
                 dfg[0].append(tr[i])
-                dfg[1][len(dfg[0])-1] = 0
+                dfg[1][len(dfg[0]) - 1] = 0
             dfg[1][dfg[0].index(tr[i])] = dfg[1][dfg[0].index(tr[i])] + 1
             if i > 0:
                 tup = (dfg[0].index(tr[i - 1]), dfg[0].index(tr[i]))
@@ -37,7 +40,8 @@ def udf(dfg, tr):
         dfg[3].add(dfg[0].index(tr[-1]))
     return dfg
 
-if __name__ == "__main__":
+
+def main():
     tr = None
     p = None
     on = 0
@@ -56,7 +60,7 @@ if __name__ == "__main__":
     tr, p, on = r(tr, p, on, "\t\t</event>")
     tr, p, on = r(tr, p, on, "\t</trace>")
     print(tr)
-    dfg = udf(dfg, tr)
+    dfg = udf(dfg, tr[1])
     tr, p, on = r(tr, p, on, "\t<trace>")
     tr, p, on = r(tr, p, on, "\t\t<event>")
     tr, p, on = r(tr, p, on, "\t\t\t<string key=\"concept:name\" value=\"A\" />")
@@ -66,6 +70,10 @@ if __name__ == "__main__":
     tr, p, on = r(tr, p, on, "\t\t</event>")
     tr, p, on = r(tr, p, on, "\t</trace>")
     print(tr)
-    dfg = udf(dfg, tr)
+    dfg = udf(dfg, tr[1])
     tr, p, on = r(tr, p, on, "</log>")
     print(dfg)
+
+
+if __name__ == "__main__":
+    main()

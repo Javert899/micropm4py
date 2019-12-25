@@ -12,7 +12,7 @@ def ip(n, im, fm, st, row):
             st[2][n[1][-1][0]] = row.split("<text>")[1].split("</")[0]
     elif st[3]:
         if "<text" in row:
-            im[len(n[0])-1] = int(row.split("<text>")[1].split("</")[0])
+            im[len(n[0]) - 1] = int(row.split("<text>")[1].split("</")[0])
     elif st[1]:
         if "<place" in row:
             st[4] = n[0].index(row.split("idref=\"")[1].split("\"")[0])
@@ -46,14 +46,16 @@ def ip(n, im, fm, st, row):
         st[1] = True
     return n, im, fm, st
 
-if __name__ == "__main__":
+
+def main():
     n = [[], []]
     im = {}
     fm = {}
     st = [False, False, {}, False, None]
     n, im, fm, st = ip(n, im, fm, st, "<?xml version='1.0' encoding='UTF-8'?>")
     n, im, fm, st = ip(n, im, fm, st, "<pnml>")
-    n, im, fm, st = ip(n, im, fm, st, "<net id=\"net1\" type=\"http://www.pnml.org/version-2009/grammar/pnmlcoremodel\">")
+    n, im, fm, st = ip(n, im, fm, st,
+                       "<net id=\"net1\" type=\"http://www.pnml.org/version-2009/grammar/pnmlcoremodel\">")
     n, im, fm, st = ip(n, im, fm, st, "<page id=\"n0\">")
     n, im, fm, st = ip(n, im, fm, st, "<place id=\"source\">")
     n, im, fm, st = ip(n, im, fm, st, "<name>")
@@ -106,3 +108,6 @@ if __name__ == "__main__":
     print(im)
     print(fm)
 
+
+if __name__ == "__main__":
+    main()

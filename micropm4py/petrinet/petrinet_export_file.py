@@ -7,36 +7,36 @@ def export(net, im, fm, file_path):
     F.write("<page id=\"n0\">\n")
     i = 0
     while i < len(net[0]):
-        F.write("<place id=\"pl"+str(i)+"\">\n")
+        F.write("<place id=\"pl" + str(i) + "\">\n")
         F.write("<name>\n")
-        F.write("<text>"+net[0][i]+"</text>\n")
+        F.write("<text>" + net[0][i] + "</text>\n")
         F.write("</name>\n")
         if i in im:
             F.write("<initialMarking>\n")
-            F.write("<text>"+str(im[i])+"</text>\n")
+            F.write("<text>" + str(im[i]) + "</text>\n")
             F.write("</initialMarking>\n")
         F.write("</place>\n")
         i = i + 1
     a = 0
     i = 0
     while i < len(net[1]):
-        F.write("<transition id=\"tr"+str(i)+"\">\n")
+        F.write("<transition id=\"tr" + str(i) + "\">\n")
         F.write("<name>\n")
-        F.write("<text>"+net[1][i][0]+"</text>\n")
+        F.write("<text>" + net[1][i][0] + "</text>\n")
         F.write("</name>\n")
         F.write("</transition>\n")
         for p in net[1][i][1]:
             a = a + 1
-            F.write("<arc id=\"ac"+str(a)+"\" source=\"pl"+str(p)+"\" target=\"tr"+str(i)+"\"/>\n")
+            F.write("<arc id=\"ac" + str(a) + "\" source=\"pl" + str(p) + "\" target=\"tr" + str(i) + "\"/>\n")
         for p in net[1][i][2]:
             a = a + 1
-            F.write("<arc id=\"ac"+str(a)+"\" source=\"tr"+str(i)+"\" target=\"pl"+str(p)+"\"/>\n")
+            F.write("<arc id=\"ac" + str(a) + "\" source=\"tr" + str(i) + "\" target=\"pl" + str(p) + "\"/>\n")
         i = i + 1
     F.write("</page>\n")
     F.write("<finalmarkings>\n")
     F.write("<marking>\n")
     for p in fm:
-        F.write("<place idref=\"pl"+str(p)+"\">\n")
+        F.write("<place idref=\"pl" + str(p) + "\">\n")
         F.write("<text>1</text>\n")
         F.write("</place>\n")
     F.write("</marking>\n")
