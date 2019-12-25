@@ -19,7 +19,8 @@ setup(
     author_email=micropm4py.__author_email__,
     py_modules=[micropm4py.__name__],
     include_package_data=True,
-    packages=['micropm4py', 'micropm4py.log', 'micropm4py.petrinet', 'micropm4py.util'],
+    packages=['micropm4py', 'micropm4py.log', 'micropm4py.util', 'micropm4py.petrinet',
+              'micropm4py.conversion', 'micropm4py.conversion.dfg', 'micropm4py.conversion.pm4py'],
     url='http://www.pm4py.org',
     license='GPL 3.0',
     install_requires=[
