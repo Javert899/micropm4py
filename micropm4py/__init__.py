@@ -1,6 +1,6 @@
-from micropm4py import log, petrinet
+from micropm4py import log, petrinet, util
 
-__version__ = '0.0.2'
+__version__ = '0.0.3'
 __doc__ = "MicroPM4Py - Process Mining for Micro-Controllers"
 __author__ = 'PADS'
 __author_email__ = 'a.berti@pads.rwth-aachen.de'
