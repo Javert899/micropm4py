@@ -1,3 +1,5 @@
+import time
+
 # RAN ON CORTEX M3, 64kb RAM
 # Supports only visible transitions, and with arc weight equal to 1. Supports duplicate transitions.
 def ip(n, im, fm, st, row):
@@ -19,10 +21,11 @@ def ip(n, im, fm, st, row):
         elif "<text" in row:
             fm[st[4]] = int(row.split("<text>")[1].split("</")[0])
     elif "<place" in row:
-        n[0].append(row.split("id=\"")[1].split("\"")[0])
+        n[0].append(row.split("\"")[1])
     elif "<arc" in row:
-        so = row.split("source=\"")[1].split("\"")[0]
-        ta = row.split("target=\"")[1].split("\"")[0]
+        rs = row.split("\"")
+        so = rs[3]
+        ta = rs[5]
         if so in n[0]:
             i = 0
             while i < len(n[1]):
@@ -110,4 +113,7 @@ def main():
 
 
 if __name__ == "__main__":
+    aa = time.ticks_ms()
     main()
+    bb = time.ticks_ms()
+    print(bb-aa)

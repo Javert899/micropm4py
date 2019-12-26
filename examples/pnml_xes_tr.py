@@ -10,17 +10,18 @@ def ip(n, im, fm, st, row):
             st[2][n[1][-1][0]] = row.split("<text>")[1].split("</")[0]
     elif st[3]:
         if "<text" in row:
-            im[len(n[0])-1] = int(row.split("<text>")[1].split("</")[0])
+            im[len(n[0]) - 1] = int(row.split("<text>")[1].split("</")[0])
     elif st[1]:
         if "<place" in row:
             st[4] = n[0].index(row.split("idref=\"")[1].split("\"")[0])
         elif "<text" in row:
             fm[st[4]] = int(row.split("<text>")[1].split("</")[0])
     elif "<place" in row:
-        n[0].append(row.split("id=\"")[1].split("\"")[0])
+        n[0].append(row.split("\"")[1])
     elif "<arc" in row:
-        so = row.split("source=\"")[1].split("\"")[0]
-        ta = row.split("target=\"")[1].split("\"")[0]
+        rs = row.split("\"")
+        so = rs[3]
+        ta = rs[5]
         if so in n[0]:
             i = 0
             while i < len(n[1]):
@@ -43,6 +44,7 @@ def ip(n, im, fm, st, row):
     elif "<finalmark" in row:
         st[1] = True
     return n, im, fm, st
+
 
 n = [[], []]
 im = {}
@@ -106,7 +108,7 @@ del ip
 def r(tr, p, on, row):
     if on == 2:
         if "concept:name" in row:
-            p.append(row.split("value=\"")[1].split("\"")[0])
+            p[1].append(row.split("\"")[3])
         elif "</event" in row:
             on = 1
     elif on == 1:
@@ -116,10 +118,12 @@ def r(tr, p, on, row):
             tr = p
             p = None
             on = 0
+        elif "concept:name" in row:
+            p[0] = row.split("\"")[3]
     else:
         tr = None
         if "<trace" in row:
-            p = []
+            p = ["", []]
             on = 1
     return tr, p, on
 
@@ -172,7 +176,7 @@ tr, p, on = r(tr, p, on, "\t\t\t<string key=\"concept:name\" value=\"C\" />")
 tr, p, on = r(tr, p, on, "\t\t</event>")
 tr, p, on = r(tr, p, on, "\t</trace>")
 print(tr)
-print(ex_trace(n, copy(im), copy(fm), tr))
+print(ex_trace(n, copy(im), copy(fm), tr[1]))
 tr, p, on = r(tr, p, on, "\t<trace>")
 tr, p, on = r(tr, p, on, "\t\t<event>")
 tr, p, on = r(tr, p, on, "\t\t\t<string key=\"concept:name\" value=\"A\" />")
@@ -182,6 +186,6 @@ tr, p, on = r(tr, p, on, "\t\t\t<string key=\"concept:name\" value=\"B\" />")
 tr, p, on = r(tr, p, on, "\t\t</event>")
 tr, p, on = r(tr, p, on, "\t</trace>")
 print(tr)
-print(ex_trace(n, copy(im), copy(fm), tr))
+print(ex_trace(n, copy(im), copy(fm), tr[1]))
 tr, p, on = r(tr, p, on, "</log>")
 

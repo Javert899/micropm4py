@@ -1,8 +1,10 @@
+import time
+
 # RAN ON CORTEX M3, 64kb RAM
 def r(tr, p, on, row):
     if on == 2:
         if "concept:name" in row:
-            p[1].append(row.split("value=\"")[1].split("\"")[0])
+            p[1].append(row.split("\"")[3])
         elif "</event" in row:
             on = 1
     elif on == 1:
@@ -13,7 +15,7 @@ def r(tr, p, on, row):
             p = None
             on = 0
         elif "concept:name" in row:
-            p[0] = row.split("value=\"")[1].split("\"")[0]
+            p[0] = row.split("\"")[3]
     else:
         tr = None
         if "<trace" in row:
@@ -49,6 +51,7 @@ def main():
     tr, p, on = r(tr, p, on, "<?xml version='1.0' encoding='UTF-8'?>")
     tr, p, on = r(tr, p, on, "<log>")
     tr, p, on = r(tr, p, on, "\t<trace>")
+    tr, p, on = r(tr, p, on, "\t\t<string key=\"concept:name\" value=\"ciao\" />")
     tr, p, on = r(tr, p, on, "\t\t<event>")
     tr, p, on = r(tr, p, on, "\t\t\t<string key=\"concept:name\" value=\"A\" />")
     tr, p, on = r(tr, p, on, "\t\t</event>")
@@ -76,4 +79,7 @@ def main():
 
 
 if __name__ == "__main__":
+    aa = time.ticks_ms()
     main()
+    bb = time.ticks_ms()
+    print(bb-aa)
