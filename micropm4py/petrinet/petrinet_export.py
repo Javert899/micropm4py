@@ -1,3 +1,5 @@
+import time
+
 # RAN ON CORTEX M3, 64kb RAM
 # Supports only visible transitions, and with arc weight equal to 1. Supports duplicate transitions.
 def export(net, im, fm):
@@ -7,37 +9,37 @@ def export(net, im, fm):
     print("<page id=\"n0\">")
     i = 0
     while i < len(net[0]):
-        print("<place id=\"pl" + str(i) + "\">")
+        print("<place id=\"pl%d\">" % (i))
         print("<name>")
-        print("<text>" + net[0][i] + "</text>")
+        print("<text>%s</text>" % (net[0][i]))
         print("</name>")
         if i in im:
             print("<initialMarking>")
-            print("<text>" + str(im[i]) + "</text>")
+            print("<text>%d</text>" % (im[i]))
             print("</initialMarking>")
         print("</place>")
         i = i + 1
     a = 0
     i = 0
     while i < len(net[1]):
-        print("<transition id=\"tr" + str(i) + "\">")
+        print("<transition id=\"tr%d\">" % (i))
         print("<name>")
-        print("<text>" + net[1][i][0] + "</text>")
+        print("<text>%s</text>" % (net[1][i][0]))
         print("</name>")
         print("</transition>")
         for p in net[1][i][1]:
             a = a + 1
-            print("<arc id=\"ac" + str(a) + "\" source=\"pl" + str(p) + "\" target=\"tr" + str(i) + "\"/>")
+            print("<arc id=\"ac%d\" source=\"pl%d\" target=\"tr%d\"/>" % (a, p, i))
         for p in net[1][i][2]:
             a = a + 1
-            print("<arc id=\"ac" + str(a) + "\" source=\"tr" + str(i) + "\" target=\"pl" + str(p) + "\"/>")
+            print("<arc id=\"ac%d\" source=\"tr%d\" target=\"pl%d\"/>" % (a, i, p))
         i = i + 1
     print("</page>")
     print("<finalmarkings>")
     print("<marking>")
     for p in fm:
-        print("<place idref=\"pl" + str(p) + "\">")
-        print("<text>1</text>")
+        print("<place idref=\"pl%d\">" % (p))
+        print("<text>%d</text>" % (fm[p]))
         print("</place>")
     print("</marking>")
     print("</finalmarkings>")
@@ -51,4 +53,7 @@ def main():
 
 
 if __name__ == "__main__":
+    aa = time.ticks_ms()
     main()
+    bb = time.ticks_ms()
+    print(bb-aa)

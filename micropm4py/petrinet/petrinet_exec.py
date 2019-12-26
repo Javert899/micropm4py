@@ -1,3 +1,5 @@
+import time
+
 # RAN ON CORTEX M3, 64kb RAM
 def exec(p, m, a):
     for t in p[1]:
@@ -34,4 +36,7 @@ def main():
 
 
 if __name__ == "__main__":
+    aa = time.ticks_ms()
     main()
+    bb = time.ticks_ms()
+    print(bb-aa)
