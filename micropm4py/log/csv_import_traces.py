@@ -22,6 +22,16 @@ def import_traces(d, l, sep, cidp, acp):
     return d
 
 
+def finish_traces(d):
+    r = []
+    kk = list(d.keys())
+    while kk:
+        r.append([kk[0], d[kk[0]]])
+        del d[kk[0]]
+        del kk[0]
+    return r
+
+
 def import_dfg(dfg, d, l, sep, cidp, acp):
     l = l.rstrip().split(sep)
     a = l[acp]
@@ -55,6 +65,7 @@ def main():
     d = import_traces(d, "1,B", ",", cidp, acp)
     d = import_traces(d, "2,B", ",", cidp, acp)
     d = import_traces(d, "1,C", ",", cidp, acp)
+    d = finish_traces(d)
     print(d)
 
 
@@ -72,7 +83,7 @@ def main2():
 
 
 if __name__ == "__main__":
-    aa = time.ticks_ms()
+    #aa = time.ticks_ms()
     main()
-    bb = time.ticks_ms()
-    print(bb-aa)
+    #bb = time.ticks_ms()
+    #print(bb-aa)

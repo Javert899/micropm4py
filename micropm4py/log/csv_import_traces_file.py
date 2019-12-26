@@ -11,6 +11,7 @@ def import_traces_path(file_path, sep, ci, ai):
         d = csv_import_traces.import_traces(d, line, sep, cidp, acp)
         line = F.readline()
     F.close()
+    d = csv_import_traces.finish_traces(d)
     return d
 
 
