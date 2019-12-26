@@ -1,5 +1,6 @@
 import time
 
+# RAN ON CORTEX M3, 64kb RAM
 def import_header(l, sep, ci, ai):
     l = l.split(sep)
     cidp = -1
@@ -83,7 +84,7 @@ def main2():
 
 
 if __name__ == "__main__":
-    #aa = time.ticks_ms()
+    aa = time.ticks_ms()
     main()
-    #bb = time.ticks_ms()
-    #print(bb-aa)
+    bb = time.ticks_ms()
+    print(bb-aa)
