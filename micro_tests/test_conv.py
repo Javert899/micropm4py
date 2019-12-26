@@ -12,9 +12,11 @@ class TestConv(unittest.TestCase):
     def test_conv_log(self):
         traces = xes_import_traces_file.imp_list_traces_from_file("running-example.xes")
         dfg0 = traces_to_dfg.trs_to_dfg(traces)
-        acti_count, dfg = pm4py_dfg.to(dfg0)
+        dfg, acti_count, start_activities, end_activities = pm4py_dfg.to(dfg0)
         print(acti_count)
         print(dfg)
+        print(start_activities)
+        print(end_activities)
 
 
 if __name__ == "__main__":
