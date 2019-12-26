@@ -55,7 +55,7 @@ def main():
     d = import_traces(d, "1,B", ",", cidp, acp)
     d = import_traces(d, "2,B", ",", cidp, acp)
     d = import_traces(d, "1,C", ",", cidp, acp)
-    print(d.values())
+    print(d)
 
 
 def main2():

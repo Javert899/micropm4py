@@ -11,7 +11,7 @@ def import_traces_path(file_path, sep, ci, ai):
         d = csv_import_traces.import_traces(d, line, sep, cidp, acp)
         line = F.readline()
     F.close()
-    return list(d.values())
+    return d
 
 
 def import_dfg_path(file_path, sep, ci, ai):
