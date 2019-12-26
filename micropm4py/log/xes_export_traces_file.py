@@ -5,10 +5,10 @@ def st_exp(F):
 
 def exp_tr_cid(F, tr, cid):
     F.write("\t<trace>\n")
-    F.write("\t\t<string key=\"concept:name\" value=\"" + str(cid) + "\" />\n")
+    F.write("\t\t<string key=\"concept:name\" value=\"%s\" />\n" % (cid))
     for act in tr:
         F.write("\t\t<event>\n")
-        F.write("\t\t\t<string key=\"concept:name\" value=\"" + act + "\" />\n")
+        F.write("\t\t\t<string key=\"concept:name\" value=\"%s\" />\n" % (act))
         F.write("\t\t</event>\n")
     F.write("\t</trace>\n")
 
@@ -17,7 +17,7 @@ def exp_tr(F, tr):
     F.write("\t<trace>\n")
     for act in tr:
         F.write("\t\t<event>\n")
-        F.write("\t\t\t<string key=\"concept:name\" value=\"" + act + "\" />\n")
+        F.write("\t\t\t<string key=\"concept:name\" value=\"%s\" />\n" % (act))
         F.write("\t\t</event>\n")
     F.write("\t</trace>\n")
 

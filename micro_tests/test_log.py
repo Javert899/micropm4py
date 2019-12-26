@@ -17,7 +17,10 @@ class TestLog(unittest.TestCase):
     def test_xes_import_export_file(self):
         log = xes_import_traces_file.imp_list_traces_from_file("running-example.xes")
         xes_export_traces_file.export_traces(log, "ru.xes")
+        log = xes_import_traces_file.imp_list_traces_from_file("ru.xes")
+        xes_export_traces_file.export_traces(log, "ru2.xes")
         os.remove("ru.xes")
+        os.remove("ru2.xes")
 
     def test_xes_petri_replay(self):
         log = xes_import_traces_file.imp_list_traces_from_file("running-example.xes")
