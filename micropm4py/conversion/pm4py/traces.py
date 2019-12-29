@@ -1,16 +1,16 @@
-import pm4py
+import pm4py.objects.log.log as pm4py_log
 
 
 def to_trace(list_act, cid):
-    t = pm4py.objects.log.log.Trace()
+    t = pm4py_log.Trace()
     t.attributes["concept:name"] = cid
     for act in list_act:
-        t.append(pm4py.objects.log.log.Event({"concept:name": act}))
+        t.append(pm4py_log.Event({"concept:name": act}))
     return t
 
 
 def to(trs):
-    l = pm4py.objects.log.log.EventLog()
+    l = pm4py_log.EventLog()
     i = 0
     while i < len(trs):
         if len(trs[i]) == 2 and type(trs[i][1]) is list:
