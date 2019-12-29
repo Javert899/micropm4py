@@ -1,6 +1,7 @@
 from pm4py.objects.petri.petrinet import PetriNet, Marking
 from pm4py.objects.petri.utils import petri as petri_utils
 
+
 def to(net0, im0, fm0):
     net = PetriNet("")
     im = Marking()
@@ -22,12 +23,39 @@ def to(net0, im0, fm0):
     i = 0
     while i < len(net0[1]):
         for p in net0[1][i][1]:
-            petri_utils.utils.add_arc_from_to(dp[p], dt[i], net)
+            petri_utils.utils.add_arc_from_to(dp[p], dt[i], net, weight=net0[1][i][1][p])
         for p in net0[1][i][2]:
-            petri_utils.utils.add_arc_from_to(dt[i], dp[p], net)
+            petri_utils.utils.add_arc_from_to(dt[i], dp[p], net, weight=net0[1][i][2][p])
         i = i + 1
     for p in im0:
         im[dp[p]] = im0[p]
     for p in fm0:
         fm[dp[p]] = fm0[p]
     return net, im, fm
+
+
+def frm(net, im, fm):
+    net0 = [[], []]
+    im0 = {}
+    fm0 = {}
+    places = list(net.places)
+    transitions = list(net.transitions)
+    dp = {places[i]:i for i in range(len(places))}
+    dt = {transitions[i]:i for i in range(len(transitions))}
+    for p in places:
+        net0[0].append(p.name)
+    for t in transitions:
+        net0[1].append([t.label, {}, {}])
+        for a in t.in_arcs:
+            p = a.source
+            w = a.weight
+            net0[1][-1][1][dp[p]] = w
+        for a in t.out_arcs:
+            p = a.target
+            w = a.weight
+            net0[1][-1][2][dp[p]] = w
+    for p in im:
+        im0[dp[p]] = im[p]
+    for p in fm:
+        fm0[dp[p]] = fm[p]
+    return net0, im0, fm0
