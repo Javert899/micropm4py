@@ -43,6 +43,25 @@ def udf(dfg, tr):
     return dfg
 
 
+def udf_sten(dfg, tr):
+    if len(tr) > 0:
+        tr = [">>"] + tr + ["[]"]
+        i = 0
+        while i < len(tr):
+            if not tr[i] in dfg[0]:
+                dfg[0].append(tr[i])
+                dfg[1][len(dfg[0]) - 1] = 0
+            dfg[1][dfg[0].index(tr[i])] = dfg[1][dfg[0].index(tr[i])] + 1
+            if i > 0:
+                tup = (dfg[0].index(tr[i - 1]), dfg[0].index(tr[i]))
+                if tup not in dfg[4]:
+                    dfg[4][tup] = 0
+                dfg[4][tup] = dfg[4][tup] + 1
+            i = i + 1
+        dfg[2].add(dfg[0].index(tr[0]))
+        dfg[3].add(dfg[0].index(tr[-1]))
+    return dfg
+
 def main():
     tr = None
     p = None
@@ -63,7 +82,7 @@ def main():
     tr, p, on = r(tr, p, on, "\t\t</event>")
     tr, p, on = r(tr, p, on, "\t</trace>")
     print(tr)
-    dfg = udf(dfg, tr[1])
+    dfg = udf_sten(dfg, tr[1])
     tr, p, on = r(tr, p, on, "\t<trace>")
     tr, p, on = r(tr, p, on, "\t\t<event>")
     tr, p, on = r(tr, p, on, "\t\t\t<string key=\"concept:name\" value=\"A\" />")
@@ -73,7 +92,7 @@ def main():
     tr, p, on = r(tr, p, on, "\t\t</event>")
     tr, p, on = r(tr, p, on, "\t</trace>")
     print(tr)
-    dfg = udf(dfg, tr[1])
+    dfg = udf_sten(dfg, tr[1])
     tr, p, on = r(tr, p, on, "</log>")
     print(dfg)
 
