@@ -16,6 +16,9 @@ class TestLog(unittest.TestCase):
     def test_xes_dfg_import(self):
         dfg = xes_import_traces_file.imp_dfg_file("running-example.xes")
 
+    def test_xes_dfg_import_sten(self):
+        dfg = xes_import_traces_file.imp_dfg_file_sten("running-example.xes")
+
     def test_xes_import_export_file(self):
         log = xes_import_traces_file.imp_list_traces_from_file("running-example.xes")
         xes_export_traces_file.export_traces(log, "ru.xes")
@@ -33,6 +36,7 @@ class TestLog(unittest.TestCase):
     def test_csv_import(self):
         csv_import_traces.main()
         csv_import_traces.main2()
+        csv_import_traces.main3()
 
     def test_csv_export(self):
         csv_export_traces.main()
@@ -42,6 +46,9 @@ class TestLog(unittest.TestCase):
         dfg = csv_import_traces_file.import_dfg_path("running-example.csv", ",", "case:concept:name", "concept:name")
         xes_export_traces_file.export_traces(log, "ru.xes")
         os.remove("ru.xes")
+
+    def test_csv_import_file_sten(self):
+        dfg = csv_import_traces_file.import_dfg_path_sten("running-example.csv", ",", "case:concept:name", "concept:name")
 
     def test_csv_export_file(self):
         log = xes_import_traces_file.imp_list_traces_from_file("running-example.xes")
