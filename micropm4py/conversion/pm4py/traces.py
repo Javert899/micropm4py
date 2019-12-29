@@ -23,3 +23,19 @@ def to(trs):
         l.append(t)
         i = i + 1
     return l
+
+
+def frm(log):
+    trs = []
+    i = 0
+    while i < len(log):
+        if "concept:name" in log[i].attributes:
+            cid = log[i].attributes["concept:name"]
+        else:
+            cid = str(i)
+        list_act = []
+        for eve in log[i]:
+            list_act.append(eve["concept:name"])
+        trs.append([cid, list_act])
+        i = i + 1
+    return trs
