@@ -1,3 +1,6 @@
+import time
+
+# RAN ON CORTEX M3, 64kb RAM
 def tr_to_dfg0(tr, dfg):
     if len(tr) > 0:
         i = 0
@@ -38,4 +41,7 @@ def main():
 
 
 if __name__ == "__main__":
+    aa = time.ticks_ms()
     main()
+    bb = time.ticks_ms()
+    print(bb-aa)

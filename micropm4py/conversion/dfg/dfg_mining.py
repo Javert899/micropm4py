@@ -1,3 +1,6 @@
+import time
+
+# RAN ON CORTEX M3, 64kb RAM
 def apply(dfg):
     n = [[], []]
     im = {}
@@ -24,4 +27,7 @@ def main():
 
 
 if __name__ == "__main__":
+    aa = time.ticks_ms()
     main()
+    bb = time.ticks_ms()
+    print(bb-aa)
