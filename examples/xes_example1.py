@@ -11,6 +11,7 @@ def main():
     xes_export_traces_file.export_traces(log, "ru.xes")
     os.remove("ru.xes")
     dfg = traces_to_dfg.trs_to_dfg(log)
+    # print the DOT (that can be layouted easily with the command line)
     dfg_print.prnt_dot(dfg)
 
 
