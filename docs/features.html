@@ -1,0 +1,63 @@
+<html>
+<head>
+<title>MicroPM4Py Features</title>
+<meta name="description" content="MicroPM4Py offers a set of process mining features that can be executed in constrained environments.">
+<link rel="icon" href="snake.ico" type="image/x-icon"/>
+<link rel="shortcut icon" href="snake.ico" type="image/x-icon"/>
+<script style="text/javascript" src="jquery.min.js"></script>
+<script style="text/javascript" src="bootstrap.min.js"></script>
+<link rel="stylesheet" href="bootstrap.min.css">
+</head>
+<body>
+<div class="jumbotron text-center">
+  <h1><img src="snake.png" style="width: 100px"></img>MicroPM4Py</h1>
+  <p><b>Process Mining for Microcontrollers in Python</b></p> 
+</div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-4">
+      <h5><a href="index.html">Home</a></h5>
+	<h5><a href="hardware.html">Hardware</a></h5>
+      <h5><a href="installation.html">Installation</a></h5>
+      <h5><a href="features.html">Features</a></h5>
+	<h5><a href="contributors.html">Contributors</a></h5>
+	<h5>Documentation</h5>
+    </div>
+    <div class="col-8">
+      <h3>Features</h3>
+      <p>Log importing/exporting</p>
+      <ul>
+	<li>XES importer (level A-1, only case ID and activity)</li>
+	<li>XES exporter (level A-1, only case ID and activity)</li>
+	<li>CSV importer (only case ID and activity, support for the specification of the separator)</li>
+	<li>CSV exporter (only case ID and activity, support for the specification of th separator</li>
+	<li>Importing of DFGs from XES (without keeping the log in-memory)</li>
+	<li>Importing of DFGs from CSV (without keeping the log in-memory)</li>
+	<li>Support for the insertion of artificial start-end activities</li>
+	<li>Conversion of log to DFG</li>
+	</ul>
+	<p>Petri Nets</p>
+	<ul>
+	<li>Execution semantics</li>
+	<li>Token-based replay (without support for invisible transitions)</li>
+	<li>Importing of PNML files</li>
+	<li>Exporting of PNML files</li>
+	</ul>
+	<p>Conversions</p>
+	<ul>
+	<li>Conversion of DFG to Petri net (DFG mining)</li>
+	<li>Conversion of MicroPM4Py DFG to PM4Py DFG</li>
+	<li>Conversion from/to MicroPM4Py log to PM4Py log</li>
+	<li>Conversion from/to MicroPM4Py Petri nets to PM4Py Petri nets</li>
+	</ul>
+	<p>Visualizations</p>
+	<ul>
+	<li>DOT visualization of DFGS</li>
+	<li>DOT visualization of Petri nets</li>
+	</ul>
+    </div>
+  </div>
+</div>
+</body>
+</html>
