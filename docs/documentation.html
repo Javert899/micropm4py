@@ -40,6 +40,7 @@
 	<li><a href="#xes">Importing/exporting XES files</a></li>
 	<li><a href="#csv">Importing/exporting CSV files</a></li>
 	<li><a href="#dfg">Working with DFGs</a></li>
+	<li><a href="#petri1">Petri Nets - Importing/Exporting/Visualization</a></li>
 	</ul>
 	<div id="xes">
 	<h5>Importing/exporting XES files</h5>
@@ -126,7 +127,7 @@
 	<p>Alternatively, a log structure can be converted to a DFG with the following snippet:</p>
 	<div style="background-color: black; color: white; width: 100%">
         from micropm4py.conversion.dfg import traces_to_dfg<br />
-	    dfg = traces_to_dfg.trs_to_dfg(log)
+	dfg = traces_to_dfg.trs_to_dfg(log)
 	</div>
 	To produce a visualization of the DFG into the .dot format (Graphviz), the following code snippet can be used. Here, the first element is the (target)
 	file path, while the second element is the DFG object:
@@ -142,6 +143,54 @@
 	<div style="background-color: gray; color: white; width: 100%">
 	neato -Tpng graph.dot > graph.png
 	</div>
+	</div>
+	<br />
+	<div id="petri1">
+	<h5>Petri Nets - Importing/Exporting/Visualization</h5>
+	<p>Petri Nets are a widely used class of models in the process mining world. In MicroPM4Py, we offer support for importing/exporting/visualizing <b>accepting</b> Petri nets (that are Petri nets along with an initial and a final marking).</p>
+	<p>A limitation of the implementation is the lack of compatibility for invisible transitions. Duplicate visible transitions are instead supported.</p>
+	<p>Another limitation of the import/export from PNML is the support for arc weights equal to 1.</p>
+	<p>The data structure hosting the Petri nets in MicroPM4Py is reported in the following example. The first sublist contains the names of the places (the example contains 3 places, the source place, the sink place and a place named p1). The second sublist contains the transitions. Each transition is a list where the first element is the label of the transition, the second element is the preset of the transition (the key is the index of the place in the first sublist, the value is the arc weight), the third element is the postset of the transition (described in an analogous way as the preset).</p>
+	<div style="background-color: black; color: white; width: 100%">
+	[['source', 'p1', 'sink'], [['A', {0: 1}, {1: 1}], ['B', {1: 1}, {2: 1}]]]<br />
+	</div>
+	<p>The structure of the initial/final marking is a dictionary (which structure is identical to the one of the preset/postset of a transition). As example:</p>
+        <div style="background-color: black; color: white; width: 100%">
+	{0: 1}
+	</div>
+	The following code snippet imports a Petri net from a PNML file, along with its initial and final marking:
+        <div style="background-color: black; color: white; width: 100%">
+	from micropm4py.petrinet import petrinet_import_file<br />
+	net, im, fm = petrinet_import_file.imp_file('micro_tests/running-example.pnml')
+	</div>
+	The following code snippet exports a Petri net into a PNML file, along with its initial and final marking:
+	<div style="background-color: black; color: white; width: 100%">
+	from micropm4py.petrinet import petrinet_export_file<br />
+	petrinet_export_file.export(net, im, fm, "target.pnml")
+	</div>
+        To produce a visualization of the Petri net into the .dot format (Graphviz), the following code snippet can be used. Here, the first element is the (target)
+        file path, while the second element is the Petri net object (visualized without specification of the initial and final marking):
+        <div style="background-color: black; color: white; width: 100%">
+        from micropm4py.visualization.petri_saver import save_dot<br />
+        save_dot('graph.dot', net)
+        </div>
+	The DOT file can be then rendered using the Graphviz tools. For small graphs, to render the DOT into a PNG, the following shell command can be used
+        <div style="background-color: gray; color: white; width: 100%">
+        dot -Tpng graph.dot > graph.png
+        </div>
+        For bigger graphs, the following shell command can be used:
+        <div style="background-color: gray; color: white; width: 100%">
+        neato -Tpng graph.dot > graph.png
+        </div>
+	</div>
+	<br />
+	<div id="petri2">
+	<h5>Petri Nets - Execution semantics</h5>
+	<p>Petri nets are a widely used formalism in process mining, and their importing/exporting/visualization has been described in the previous section.
+	A <b>marking</b> is a set of tokens distributed among the places of the Petri net.</p>
+	<p>The execution semantics of a Petri net is clear: when a transition is executed, a number of tokens (the preset of the transition) is consumed from the current marking, and a number of tokens (the postset of the transition) is inserted into the marking.</p>
+	<p>In an accepting Petri net, the initial state of any execution is the initial marking. Ideally, the expectation is that every process execution finishes in the final marking.</p>
+	<p>... TO BE COMPLETED ...</p>
 	</div>
     </div>
   </div>
