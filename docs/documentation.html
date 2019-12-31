@@ -1,0 +1,150 @@
+<html>
+<head>
+<title>MicroPM4Py Documentation</title>
+<meta name="description" content="This page contains the documentation of the MicroPM4Py Python process mining library for microcontrollers">
+<link rel="icon" href="snake.ico" type="image/x-icon"/>
+<link rel="shortcut icon" href="snake.ico" type="image/x-icon"/>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-155149260-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-155149260-1');
+</script>
+<script style="text/javascript" src="jquery.min.js"></script>
+<script style="text/javascript" src="bootstrap.min.js"></script>
+<link rel="stylesheet" href="bootstrap.min.css">
+</head>
+<body>
+<div class="jumbotron text-center">
+  <h1><img src="snake.png" style="width: 100px"></img>MicroPM4Py</h1>
+  <p><b>Process Mining for Microcontrollers in Python</b></p> 
+</div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-4">
+      <h5><a href="index.html">Home</a></h5>
+	<h5><a href="hardware.html">Hardware</a></h5>
+      <h5><a href="installation.html">Installation</a></h5>
+      <h5><a href="features.html">Features</a></h5>
+	<h5><a href="contributors.html">Contributors</a></h5>
+	<h5><a href="documentation.html">Documentation</a></h5>
+    </div>
+    <div class="col-8">
+      <h3>Documentation</h3>
+	<p>This page contains the documentation of the MicroPM4Py Python process mining library for microcontrollers / embedded systems. Please use these links to reach the section of interest.
+	<ul>
+	<li><a href="#xes">Importing/exporting XES files</a></li>
+	<li><a href="#csv">Importing/exporting CSV files</a></li>
+	<li><a href="#dfg">Working with DFGs</a></li>
+	</ul>
+	<div id="xes">
+	<h5>Importing/exporting XES files</h5>
+	<p>All the features of import/export in MicroPM4Py works only with the
+	<b>case ID</b> and <b>activity</b> attributes. Other attributes of the
+	log are currently simply ignored.</p>
+	There are several ways to import a XES file in MicroPM4Py:
+	<ul>
+	<li>Importing a XES file as a list of cases (assuming one tag per row in the XML file).</li>
+	<li>(Standard importer; works always albeit is slower) importing the XES as a list of cases.</li>
+	<li>Importing the XES as a DFG object.
+	</ul>
+	In the following, an example of the format in which the log is stored in memory is reported.
+	Within this data structure, no further compression of strings is done (while the DFG object is optimized to minimize the memory footprint).
+	Here, a list of lists is obtained. For each list, the first element is the case ID, while the second is the list of activities contained in the case (the so-called trace).
+	<div style="background-color: black; color: white; width: 100%">
+	[['3', ['register request', 'examine casually', 'check ticket', 'decide', 'reinitiate request', 'examine thoroughly', 'check ticket', 'decide', 'pay compensation']], ['2', ['register request', 'check ticket', 'examine casually', 'decide', 'pay compensation']], ['1', ['register request', 'examine thoroughly', 'check ticket', 'decide', 'reject request']], ['6', ['register request', 'examine casually', 'check ticket', 'decide', 'pay compensation']], ['5', ['register request', 'examine casually', 'check ticket', 'decide', 'reinitiate request', 'check ticket', 'examine casually', 'decide', 'reinitiate request', 'examine casually', 'check ticket', 'decide', 'reject request']], ['4', ['register request', 'check ticket', 'examine thoroughly', 'decide', 'reject request']]]
+	</div>
+	The following code snippet helps to import a XES file into the previously described data structure (here, the faster but non-standard importer is used):
+	<div style="background-color: black; color: white; width: 100%">
+        from micropm4py.log import xes_import_traces_file<br />
+        log = xes_import_traces_file.imp_list_traces_from_file('micro_tests/running-example.xes')<br />
+        </div>
+	Instead, here the standard importer is used (slower but always works)
+	<div style="background-color: black; color: white; width: 100%">
+	from micropm4py.log import xes_import_traces_file_standard<br />
+	log = xes_import_traces_file_standard.imp_list_traces_from_file('micro_tests/running-example.xes')<br />
+	</div>
+	To export a log structure into a XES file (only with case ID and activity), the following code can be used:
+	<div style="background-color: black; color: white; width: 100%">
+	from micropm4py.log import xes_export_traces_file<br />
+	xes_export_traces_file.export_traces(log, 'ru.xes')
+	</div>
+	To import a DFG from the XES, without need to store all the event log, the following code can be used. In the following of the documentation, the description of the DFG structure is reported.
+	<div style="background-color: black; color: white; width: 100%">
+        from micropm4py.log import xes_import_traces_file_standard<br />
+	dfg = xes_import_traces_file_standard.imp_dfg_file('micro_tests/running-example.xes')
+	</div>
+	</div>
+	<br />
+	<div id="csv">
+	<h5>Importing/exporting CSV files</h5>
+	For importing a CSV file (just the case ID and the activity), the following information is needed:
+	<ul>
+	<li>The separator character (, or ;) that separates the columns of the CSV file</li>
+	<li>The name of the column containing the case ID</li>
+	<li>The name of the column containing the activity</li>
+	</ul>
+	The following code snippet helps to import a CSV file into the log data structure. Here, the first argument of the method is the path to the CSV file,
+	the second element is the separator, the third element is the case ID column, and the fourth element is the activity column. No support for the quotechar is there.
+	<div style="background-color: black; color: white; width: 100%">
+	from micropm4py.log import csv_import_traces_file<br />
+	log = csv_import_traces_file.import_traces_path('micro_tests/running-example.csv', ',', 'case:concept:name', 'concept:name')
+	</div>
+	The following code snippet helps to export a log into a CSV. Here, the first argument is the log structure, the second is the (target) file path, the third is the separator, the fourth is the name of the (exported file) case ID column, the fifth is the name of the (exported file) activity column.
+	<div style="background-color: black; color: white; width: 100%">
+	from micropm4py.log import csv_export_traces_file<br />
+	csv_export_traces_file.export_to_path(log, 'ru.csv', ',', 'case:concept:name', 'concept:name')
+	</div>
+	To import directly the DFG from the CSV, without the need to store the log in-memory (so, significant memory gains are achieved), the following code can be used:
+        <div style="background-color: black; color: white; width: 100%">
+	from micropm4py.log import csv_import_traces_file<br />
+	dfg = csv_import_traces_file.import_dfg_path('micro_tests/running-example.csv', ',', 'case:concept:name', 'concept:name')
+	</div>
+	</div>
+	<br />
+	<div id="dfg">
+	<h5>Working with DFGs</h5>
+	<p>A DFG is an object that is central for many process mining applications (e.g. Alpha Miner, Inductive Miner Directly-Follows, DFG mining techniques ...).</p>
+	It can be described as a composite object containing:
+	<ul>
+	<li>The list of activities of the log</li>
+	<li>The start activities of the log</li>
+	<li>The end activities of the log</li>
+	<li>The tuples of activities directly-following each other in some cases of the log, along with the occurrences of the relationship</li>
+	</ul>
+	<p>The DFG data strucure in MicroPM4Py is described by the following example:</p>
+	<div style="background-color: black; color: white; width: 100%">
+	[['register request', 'examine casually', 'check ticket', 'decide', 'reinitiate request', 'examine thoroughly', 'pay compensation', 'reject request'], {0: 6, 1: 6, 2: 9, 3: 9, 4: 3, 5: 3, 6: 3, 7: 3}, {0}, {6, 7}, {(0, 1): 3, (1, 2): 4, (1, 3): 2, (4, 5): 1, (3, 4): 3, (4, 2): 1, (2, 1): 2, (4, 1): 1, (2, 3): 6, (3, 6): 3, (3, 7): 3, (0, 5): 1, (2, 5): 1, (5, 2): 2, (0, 2): 2, (5, 3): 1}]
+	</div>
+	<p>Here, the first sublist is the list of activities in the log, the second dictionary associates the index of the activity (according to the first sublist) to the number of occurrences of the activity,
+	the third set is the set of start activities of the log, the fourth set is the set of end activities of the log.</p>
+	<p>DFGs can be directly imported in MicroPM4Py without the need to 'pass into' the log structure, as seen in the previous sections of the documentation.</p>
+	<p>Alternatively, a log structure can be converted to a DFG with the following snippet:</p>
+	<div style="background-color: black; color: white; width: 100%">
+        from micropm4py.conversion.dfg import traces_to_dfg<br />
+	    dfg = traces_to_dfg.trs_to_dfg(log)
+	</div>
+	To produce a visualization of the DFG into the .dot format (Graphviz), the following code snippet can be used. Here, the first element is the (target)
+	file path, while the second element is the DFG object:
+	<div style="background-color: black; color: white; width: 100%">
+	from micropm4py.visualization.dfg_saver import save_dot<br />
+	save_dot('graph.dot', dfg)
+	</div>
+	The DOT file can be then rendered using the Graphviz tools. For small graphs, to render the DOT into a PNG, the following shell command can be used
+	<div style="background-color: gray; color: white; width: 100%">
+	dot -Tpng graph.dot > graph.png
+	</div>
+	For bigger graphs, the following shell command can be used:
+	<div style="background-color: gray; color: white; width: 100%">
+	neato -Tpng graph.dot > graph.png
+	</div>
+	</div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
