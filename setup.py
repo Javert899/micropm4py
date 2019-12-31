@@ -26,8 +26,8 @@ setup(
     install_requires=[
     ],
     project_urls={
-        'Documentation': 'http://pm4py.pads.rwth-aachen.de/documentation/',
-        'Source': 'https://github.com/pm4py/pm4py-source',
-        'Tracker': 'https://github.com/pm4py/pm4py-source/issues',
+        'Documentation': 'https://www.micropm4py.org/documentation.html',
+        'Source': 'https://github.com/Javert899/micropm4py/tree/master/micropm4py',
+        'Tracker': 'https://github.com/Javert899/micropm4py/issues',
     }
 )
