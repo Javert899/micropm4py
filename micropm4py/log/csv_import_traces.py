@@ -79,6 +79,9 @@ def import_dfg_sten(dfg, d, l, sep, cidp, acp):
 def finish_dfg(dfg, d):
     for c in d:
         dfg[3].add(dfg[0].index(d[c]))
+    dfg[0] = tuple(dfg[0])
+    dfg[2] = tuple(dfg[2])
+    dfg[3] = tuple(dfg[3])
     return dfg
 
 

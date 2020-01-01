@@ -30,6 +30,9 @@ def trs_to_dfg(trs):
     dfg = [[], dict(), set(), set(), dict()]
     for tr in trs:
         dfg = tr_to_dfg(tr, dfg)
+    dfg[0] = tuple(dfg[0])
+    dfg[2] = tuple(dfg[2])
+    dfg[3] = tuple(dfg[3])
     return dfg
 
 

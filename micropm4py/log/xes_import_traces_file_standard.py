@@ -49,6 +49,9 @@ def imp_dfg_file(file_path):
             dfg = xes_import_traces.udf(dfg, tr[1])
         line = get_line(F)
     F.close()
+    dfg[0] = tuple(dfg[0])
+    dfg[2] = tuple(dfg[2])
+    dfg[3] = tuple(dfg[3])
     return dfg
 
 
@@ -66,4 +69,7 @@ def imp_dfg_file_sten(file_path):
             dfg = xes_import_traces.udf_sten(dfg, tr[1])
         line = get_line(F)
     F.close()
+    dfg[0] = tuple(dfg[0])
+    dfg[2] = tuple(dfg[2])
+    dfg[3] = tuple(dfg[3])
     return dfg

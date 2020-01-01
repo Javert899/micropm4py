@@ -36,6 +36,6 @@ def frm(log):
         list_act = []
         for eve in log[i]:
             list_act.append(eve["concept:name"])
-        trs.append([cid, list_act])
+        trs.append((cid, tuple(list_act)))
         i = i + 1
     return trs
