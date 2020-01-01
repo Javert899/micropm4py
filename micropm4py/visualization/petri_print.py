@@ -24,7 +24,7 @@ def print_dot(net):
 
 
 def main():
-    p = [["source", "p1", "sink"], [["A", {0: 1}, {1: 1}], ["B", {1: 1}, {2: 1}]]]
+    p = [("source", "p1", "sink"), (("A", {0: 1}, {1: 1}), ("B", {1: 1}, {2: 1}))]
     print_dot(p)
 
 

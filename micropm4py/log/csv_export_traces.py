@@ -24,8 +24,8 @@ def exp_trs(trs, sep, ci, ai):
 
 def main():
     exp_hea(",", "case:concept:name", "concept:name")
-    exp_tr_cid(["A", "B", "C"], ",", "c1")
-    exp_tr_cid(["A", "B"], ",", "c2")
+    exp_tr_cid(("A", "B", "C"), ",", "c1")
+    exp_tr_cid(("A", "B"), ",", "c2")
 
 
 if __name__ == "__main__":

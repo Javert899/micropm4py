@@ -21,7 +21,7 @@ def apply(dfg):
 
 
 def main():
-    dfg = [["A", "B", "C"], {0:1, 1:1, 2:1}, {0}, {2}, {(0, 1): 1, (1, 2): 1}]
+    dfg = [("A", "B", "C"), {0:1, 1:1, 2:1}, tuple({0}), tuple({2}), {(0, 1): 1, (1, 2): 1}]
     n, im, fm = apply(dfg)
     print(n)
     print(im)
