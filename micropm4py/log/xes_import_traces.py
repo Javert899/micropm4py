@@ -15,7 +15,6 @@ def r(tr, p, on, row, d):
             on = 2
         elif "</trace" in row:
             p[1] = tuple(p[1])
-            p = tuple(p)
             tr = p
             p = None
             on = 0

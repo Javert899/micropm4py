@@ -28,9 +28,13 @@ def import_traces(d, l, sep, cidp, acp, da):
 
 def finish_traces(d):
     r = []
+    vv = {}
     kk = list(d.keys())
     while kk:
-        r.append((kk[0], tuple(d[kk[0]])))
+        d[kk[0]] = tuple(d[kk[0]])
+        if d[kk[0]] not in vv:
+            vv[d[kk[0]]] = d[kk[0]]
+        r.append((kk[0], vv[d[kk[0]]]))
         del d[kk[0]]
         del kk[0]
     return r

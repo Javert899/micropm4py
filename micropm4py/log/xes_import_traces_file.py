@@ -5,6 +5,7 @@ def imp_list_traces_from_file(file_path):
     list_traces = []
     tr = None
     p = None
+    vv = {}
     on = 0
     d = {}
     F = open(file_path, "r")
@@ -12,7 +13,10 @@ def imp_list_traces_from_file(file_path):
     while line:
         tr, p, on = xes_import_traces.r(tr, p, on, line, d)
         if tr is not None:
-            list_traces.append(tr)
+            if tr[1] not in vv:
+                vv[tr[1]] = tr[1]
+            tr[1] = vv[tr[1]]
+            list_traces.append(tuple(tr))
         line = F.readline()
     F.close()
     return list_traces
