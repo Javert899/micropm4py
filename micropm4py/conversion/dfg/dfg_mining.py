@@ -10,7 +10,7 @@ def apply(dfg):
     for act in dfg[0]:
         n[0].append(act)
     for tup in dfg[4]:
-        n[1].append([dfg[0][tup[1]], {tup[0]: 1}, {tup[1]: 1}])
+        n[1].append((dfg[0][tup[1]], {tup[0]: 1}, {tup[1]: 1}))
     n[0].append("@@source@@")
     n[1].append((dfg[0][list(dfg[2])[0]], {len(n[0])-1:1}, {list(dfg[2])[0]:1}))
     n[0] = tuple(n[0])
