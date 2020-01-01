@@ -41,6 +41,7 @@
 	<li><a href="#csv">Importing/exporting CSV files</a></li>
 	<li><a href="#dfg">Working with DFGs</a></li>
 	<li><a href="#petri1">Petri Nets - Importing/Exporting/Visualization</a></li>
+	<li><a href="#petri2">Petri Nets - Execution semantics</a></li>
 	</ul>
 	<div id="xes">
 	<h5>Importing/exporting XES files</h5>
@@ -150,7 +151,7 @@
 	<p>Petri Nets are a widely used class of models in the process mining world. In MicroPM4Py, we offer support for importing/exporting/visualizing <b>accepting</b> Petri nets (that are Petri nets along with an initial and a final marking).</p>
 	<p>A limitation of the implementation is the lack of compatibility for invisible transitions. Duplicate visible transitions are instead supported.</p>
 	<p>Another limitation of the import/export from PNML is the support for arc weights equal to 1.</p>
-	<p>The data structure hosting the Petri nets in MicroPM4Py is reported in the following example. The first sublist contains the names of the places (the example contains 3 places, the source place, the sink place and a place named p1). The second sublist contains the transitions. Each transition is a list where the first element is the label of the transition, the second element is the preset of the transition (the key is the index of the place in the first sublist, the value is the arc weight), the third element is the postset of the transition (described in an analogous way as the preset).</p>
+	<p>The data structure hosting the Petri nets in MicroPM4Py is reported in the following example. The first tuple contains the names of the places (the example contains 3 places, the source place, the sink place and a place named p1). The second tuple contains the transitions. Each transition is a (sub)tuple where the first element is the label of the transition, the second element is the preset of the transition (the key is the index of the place in the first sublist, the value is the arc weight), the third element is the postset of the transition (described in an analogous way as the preset).</p>
 	<div style="background-color: black; color: white; width: 100%">
 	[("source", "p1", "sink"), (("A", {0: 1}, {1: 1}), ("B", {1: 1}, {2: 1}))]
 	</div>
@@ -190,7 +191,67 @@
 	A <b>marking</b> is a set of tokens distributed among the places of the Petri net.</p>
 	<p>The execution semantics of a Petri net is clear: when a transition is executed, a number of tokens (the preset of the transition) is consumed from the current marking, and a number of tokens (the postset of the transition) is inserted into the marking.</p>
 	<p>In an accepting Petri net, the initial state of any execution is the initial marking. Ideally, the expectation is that every process execution finishes in the final marking.</p>
-	<p>... TO BE COMPLETED ...</p>
+	<p>Let's see an example. Before everything, import the execution semantics of the Petri net, and actually import a Petri net, for example the running-example one.
+	<div style="background-color: black; color: white; width: 100%">
+	from micropm4py.petrinet import petrinet_exec<br />	
+	from micropm4py.petrinet import petrinet_import_file<br />
+	net, im, fm = petrinet_import_file.imp_file('../micro_tests/running-example.pnml')
+	</div>
+	This Petri net can be represented (using MicroPM4Py) as follows:
+	<div class="text-center">
+	<img src="ru.png" style="width: 350px"></img>
+	</div>
+	<p>The initial activity, as prescribed by the Petri net, is always register request. Then, check ticket is executed concurrently to one between examine casually and examine throughly.
+	Then, a decision occurs (decide) on the outcome of the ticket. A reinitiation of the request can happen; if not, one between pay compensation and reject request is executed.</p>
+	<p>To execute the same Petri net several times, since the execution acts on the marking, we need to copy the initial marking when we start the execution.
+	This can be done with the following code snippet:</p>
+        <div style="background-color: black; color: white; width: 100%">
+	from micropm4py.util import copy<br />
+	m = copy.copy(im)
+	</div>
+	The Petri net, initial marking and final marking structures, as imported in MicroPM4Py from the PNML file, are:
+	<div style="background-color: black; color: white; width: 100%">
+	[('start', '({'register request', 'reinitiate request'}, {'check ticket'})', '({'examine casually', 'examine thoroughly'}, {'decide'})', 'end', '({'decide'}, {'reinitiate request', 'pay compensation', 'reject request'})', '({'check ticket'}, {'decide'})', '({'register request', 'reinitiate request'}, {'examine casually', 'examine thoroughly'})'), (('decide', {2: 1, 5: 1}, {4: 1}), ('examine casually', {6: 1}, {2: 1}), ('examine thoroughly', {6: 1}, {2: 1}), ('register request', {0: 1}, {1: 1, 6: 1}), ('check ticket', {1: 1}, {5: 1}), ('reinitiate request', {4: 1}, {1: 1, 6: 1}), ('pay compensation', {4: 1}, {3: 1}), ('reject request', {4: 1}, {3: 1}))]<br />
+	{0: 1}<br />
+	{3: 1}
+	</div>
+	As in the process model, we execute the activity register request. We expect to enable both the check ticket activity and one between examine casually/examine throughly. This is exactly what happens:
+	<div style="background-color: black; color: white; width: 100%">
+	{1: 1, 6: 1}
+	</div>
+	Then, let's try to execute the following list of activities: examine casually, check ticket, decide, pay compensation. That should lead to the final marking of the process model.
+        <div style="background-color: black; color: white; width: 100%">
+	petrinet_exec.exec(net, m, "examine casually")<br />
+    	petrinet_exec.exec(net, m, "check ticket")<br />
+    	petrinet_exec.exec(net, m, "decide")<br />
+    	petrinet_exec.exec(net, m, "pay compensation")
+	</div>
+	This is exactly what happens:
+	<div style="background-color: black; color: white; width: 100%">
+	{3: 1}
+	</div>
+	<p><b>Token-based Replay</b>: instead of executing the activity one-by-one, in MicroPM4Py there is the possibility to execute through token-based
+	replay an entire trace, just to check whether it fits or not (so, returning a boolean value). Please reminder that there is support only for visible
+	transitions, and the replay just tells if the trace is fit or not, no other information (missing/remaining tokens, fitness ...).</p>
+	<p>Let's try to execute token-based replay on a fit trace. The True value is printed correctly:</p>
+	<div style="background-color: black; color: white; width: 100%">
+	m = copy.copy(im)<br />
+	res = petrinet_exec.ex_trace(net, m, fm, ['register request', 'examine casually', 'check ticket', 'decide', 'pay compensation'])<br />
+    	print(res)
+	</div>
+	A token-based replay on an unfit trace prints False as expected (here, the unfitness is the lack of execution of the activity check ticket).
+        <div style="background-color: black; color: white; width: 100%">
+        m = copy.copy(im)<br />
+        res = petrinet_exec.ex_trace(net, m, fm, ['register request', 'examine casually', 'decide', 'pay compensation'])<br />
+        print(res)
+        </div>
+	A token-based replay on a trace that is fitting but without reaching (still) the final marking prints False (since the FM is not reached):
+        <div style="background-color: black; color: white; width: 100%">
+        m = copy.copy(im)<br />
+        res = petrinet_exec.ex_trace(net, m, fm, ['register request', 'examine casually', 'check ticket', 'decide'])<br />
+        print(res)
+        </div>
+
 	</div>
     </div>
   </div>
