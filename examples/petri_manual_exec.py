@@ -5,6 +5,9 @@ from micropm4py.petrinet import petrinet_exec
 
 def main():
     net, im, fm = petrinet_import_file.imp_file("../micro_tests/running-example.pnml")
+    print(net)
+    print(im)
+    print(fm)
     # TRIAL 1 - Manually execute the Petri net
     m = copy.copy(im)
     print(m)
@@ -23,10 +26,12 @@ def main():
     res = petrinet_exec.ex_trace(net, m, fm, ["register request", "examine casually", "check ticket", "decide", "pay compensation"])
     print(res)
     # incorrect execution (check ticket is missing): the result is False
+    m = copy.copy(im)
     res = petrinet_exec.ex_trace(net, m, fm, ["register request", "examine casually", "decide", "pay compensation"])
     print(res)
     # incorrect execution (the trace til decide is correct, but one between pay compensation and reject request is missing,
     # so the final marking is not reached)
+    m = copy.copy(im)
     res = petrinet_exec.ex_trace(net, m, fm, ["register request", "examine casually", "check ticket", "decide"])
     print(res)
 
