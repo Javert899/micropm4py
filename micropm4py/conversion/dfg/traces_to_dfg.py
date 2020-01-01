@@ -21,7 +21,7 @@ def tr_to_dfg0(tr, dfg):
 
 
 def tr_to_dfg(tr, dfg):
-    if len(tr) == 2 and type(tr[1]) is list:
+    if len(tr) == 2 and type(tr[1]) is tuple:
         return tr_to_dfg0(tr[1], dfg)
     return tr_to_dfg0(tr, dfg)
 
@@ -35,8 +35,8 @@ def trs_to_dfg(trs):
 
 def main():
     dfg = [[], dict(), set(), set(), dict()]
-    dfg = tr_to_dfg(["A", "B", "C"], dfg)
-    dfg = tr_to_dfg(["A", "B"], dfg)
+    dfg = tr_to_dfg(("A", "B", "C"), dfg)
+    dfg = tr_to_dfg(("A", "B"), dfg)
     print(dfg)
 
 

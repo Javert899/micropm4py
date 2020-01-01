@@ -1,16 +1,21 @@
 import time
 
 # RAN ON CORTEX M3, 64kb RAM
-def r(tr, p, on, row):
+def r(tr, p, on, row, d):
     if on == 2:
         if "concept:name" in row:
-            p[1].append(row.split("\"")[3])
+            a = row.split("\"")[3]
+            if a not in d:
+                d[a] = a
+            p[1].append(d[a])
         elif "</event" in row:
             on = 1
     elif on == 1:
         if "<event" in row:
             on = 2
         elif "</trace" in row:
+            p[1] = tuple(p[1])
+            p = tuple(p)
             tr = p
             p = None
             on = 0
@@ -45,7 +50,7 @@ def udf(dfg, tr):
 
 def udf_sten(dfg, tr):
     if len(tr) > 0:
-        tr = [">>"] + tr + ["[]"]
+        tr = [">>"] + list(tr) + ["[]"]
         i = 0
         while i < len(tr):
             if not tr[i] in dfg[0]:
@@ -67,33 +72,34 @@ def main():
     p = None
     on = 0
     dfg = [[], dict(), set(), set(), dict()]
-    tr, p, on = r(tr, p, on, "<?xml version='1.0' encoding='UTF-8'?>")
-    tr, p, on = r(tr, p, on, "<log>")
-    tr, p, on = r(tr, p, on, "\t<trace>")
-    tr, p, on = r(tr, p, on, "\t\t<string key=\"concept:name\" value=\"ciao\" />")
-    tr, p, on = r(tr, p, on, "\t\t<event>")
-    tr, p, on = r(tr, p, on, "\t\t\t<string key=\"concept:name\" value=\"A\" />")
-    tr, p, on = r(tr, p, on, "\t\t</event>")
-    tr, p, on = r(tr, p, on, "\t\t<event>")
-    tr, p, on = r(tr, p, on, "\t\t\t<string key=\"concept:name\" value=\"B\" />")
-    tr, p, on = r(tr, p, on, "\t\t</event>")
-    tr, p, on = r(tr, p, on, "\t\t<event>")
-    tr, p, on = r(tr, p, on, "\t\t\t<string key=\"concept:name\" value=\"C\" />")
-    tr, p, on = r(tr, p, on, "\t\t</event>")
-    tr, p, on = r(tr, p, on, "\t</trace>")
+    d = {}
+    tr, p, on = r(tr, p, on, "<?xml version='1.0' encoding='UTF-8'?>", d)
+    tr, p, on = r(tr, p, on, "<log>", d)
+    tr, p, on = r(tr, p, on, "\t<trace>", d)
+    tr, p, on = r(tr, p, on, "\t\t<string key=\"concept:name\" value=\"ciao\" />", d)
+    tr, p, on = r(tr, p, on, "\t\t<event>", d)
+    tr, p, on = r(tr, p, on, "\t\t\t<string key=\"concept:name\" value=\"A\" />", d)
+    tr, p, on = r(tr, p, on, "\t\t</event>", d)
+    tr, p, on = r(tr, p, on, "\t\t<event>", d)
+    tr, p, on = r(tr, p, on, "\t\t\t<string key=\"concept:name\" value=\"B\" />", d)
+    tr, p, on = r(tr, p, on, "\t\t</event>", d)
+    tr, p, on = r(tr, p, on, "\t\t<event>", d)
+    tr, p, on = r(tr, p, on, "\t\t\t<string key=\"concept:name\" value=\"C\" />", d)
+    tr, p, on = r(tr, p, on, "\t\t</event>", d)
+    tr, p, on = r(tr, p, on, "\t</trace>", d)
     print(tr)
     dfg = udf_sten(dfg, tr[1])
-    tr, p, on = r(tr, p, on, "\t<trace>")
-    tr, p, on = r(tr, p, on, "\t\t<event>")
-    tr, p, on = r(tr, p, on, "\t\t\t<string key=\"concept:name\" value=\"A\" />")
-    tr, p, on = r(tr, p, on, "\t\t</event>")
-    tr, p, on = r(tr, p, on, "\t\t<event>")
-    tr, p, on = r(tr, p, on, "\t\t\t<string key=\"concept:name\" value=\"B\" />")
-    tr, p, on = r(tr, p, on, "\t\t</event>")
-    tr, p, on = r(tr, p, on, "\t</trace>")
+    tr, p, on = r(tr, p, on, "\t<trace>", d)
+    tr, p, on = r(tr, p, on, "\t\t<event>", d)
+    tr, p, on = r(tr, p, on, "\t\t\t<string key=\"concept:name\" value=\"A\" />", d)
+    tr, p, on = r(tr, p, on, "\t\t</event>", d)
+    tr, p, on = r(tr, p, on, "\t\t<event>", d)
+    tr, p, on = r(tr, p, on, "\t\t\t<string key=\"concept:name\" value=\"B\" />", d)
+    tr, p, on = r(tr, p, on, "\t\t</event>", d)
+    tr, p, on = r(tr, p, on, "\t</trace>", d)
     print(tr)
     dfg = udf_sten(dfg, tr[1])
-    tr, p, on = r(tr, p, on, "</log>")
+    tr, p, on = r(tr, p, on, "</log>", d)
     print(dfg)
 
 

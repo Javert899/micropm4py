@@ -6,9 +6,10 @@ def import_traces_path(file_path, sep, ci, ai):
     line = F.readline()
     cidp, acp = csv_import_traces.import_header(line, sep, ci, ai)
     d = {}
+    da = {}
     line = F.readline()
     while line:
-        d = csv_import_traces.import_traces(d, line, sep, cidp, acp)
+        d = csv_import_traces.import_traces(d, line, sep, cidp, acp, da)
         line = F.readline()
     F.close()
     d = csv_import_traces.finish_traces(d)

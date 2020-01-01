@@ -13,7 +13,7 @@ def exp_trs(trs, sep, ci, ai):
     exp_hea(sep, ci, ai)
     i = 0
     while i < len(trs):
-        if len(trs[i]) == 2 and type(trs[i][1]) is list:
+        if len(trs[i]) == 2 and type(trs[i][1]) is tuple:
             if len(trs[i][0]) > 0:
                 exp_tr_cid(trs[i][1], ",", trs[i][0])
             else:

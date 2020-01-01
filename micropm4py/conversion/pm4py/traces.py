@@ -13,7 +13,7 @@ def to(trs):
     l = pm4py_log.EventLog()
     i = 0
     while i < len(trs):
-        if len(trs[i]) == 2 and type(trs[i][1]) is list:
+        if len(trs[i]) == 2 and type(trs[i][1]) is tuple:
             if len(trs[i][0]) > 0:
                 t = to_trace(trs[i][1], trs[i][0])
             else:

@@ -30,7 +30,7 @@ def export_traces(list_traces, file_path):
     F = open(file_path, "w")
     st_exp(F)
     for tr in list_traces:
-        if len(tr) == 2 and type(tr[1]) is list:
+        if len(tr) == 2 and type(tr[1]) is tuple:
             if len(tr[0]) > 0:
                 exp_tr_cid(F, tr[1], tr[0])
             else:

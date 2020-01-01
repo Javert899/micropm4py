@@ -15,11 +15,14 @@ def import_header(l, sep, ci, ai):
     return cidp, acp
 
 
-def import_traces(d, l, sep, cidp, acp):
+def import_traces(d, l, sep, cidp, acp, da):
     l = l.rstrip().split(sep)
     if l[cidp] not in d:
         d[l[cidp]] = []
-    d[l[cidp]].append(l[acp])
+    a = l[acp]
+    if a not in da:
+        da[a] = a
+    d[l[cidp]].append(da[a])
     return d
 
 
@@ -27,7 +30,7 @@ def finish_traces(d):
     r = []
     kk = list(d.keys())
     while kk:
-        r.append([kk[0], d[kk[0]]])
+        r.append((kk[0], tuple(d[kk[0]])))
         del d[kk[0]]
         del kk[0]
     return r
@@ -88,11 +91,12 @@ def finish_dfg_sten(dfg, d):
 def main():
     cidp, acp = import_header("case:concept:name,concept:name", ",", "case:concept:name", "concept:name")
     d = {}
-    d = import_traces(d, "1,A", ",", cidp, acp)
-    d = import_traces(d, "2,A", ",", cidp, acp)
-    d = import_traces(d, "1,B", ",", cidp, acp)
-    d = import_traces(d, "2,B", ",", cidp, acp)
-    d = import_traces(d, "1,C", ",", cidp, acp)
+    da = {}
+    d = import_traces(d, "1,A", ",", cidp, acp, da)
+    d = import_traces(d, "2,A", ",", cidp, acp, da)
+    d = import_traces(d, "1,B", ",", cidp, acp, da)
+    d = import_traces(d, "2,B", ",", cidp, acp, da)
+    d = import_traces(d, "1,C", ",", cidp, acp, da)
     d = finish_traces(d)
     print(d)
 

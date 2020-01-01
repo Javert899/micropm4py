@@ -19,10 +19,11 @@ def imp_list_traces_from_file(file_path):
     tr = None
     p = None
     on = 0
+    d = {}
     F = open(file_path, "r")
     line = get_line(F)
     while line:
-        tr, p, on = xes_import_traces.r(tr, p, on, line)
+        tr, p, on = xes_import_traces.r(tr, p, on, line, d)
         if tr is not None:
             list_traces.append(tr)
         line = get_line(F)
@@ -35,10 +36,11 @@ def imp_dfg_file(file_path):
     tr = None
     p = None
     on = 0
+    d = {}
     F = open(file_path, "r")
     line = get_line(F)
     while line:
-        tr, p, on = xes_import_traces.r(tr, p, on, line)
+        tr, p, on = xes_import_traces.r(tr, p, on, line, d)
         if tr is not None:
             dfg = xes_import_traces.udf(dfg, tr[1])
         line = get_line(F)
@@ -51,10 +53,11 @@ def imp_dfg_file_sten(file_path):
     tr = None
     p = None
     on = 0
+    d = {}
     F = open(file_path, "r")
     line = get_line(F)
     while line:
-        tr, p, on = xes_import_traces.r(tr, p, on, line)
+        tr, p, on = xes_import_traces.r(tr, p, on, line, d)
         if tr is not None:
             dfg = xes_import_traces.udf_sten(dfg, tr[1])
         line = get_line(F)
