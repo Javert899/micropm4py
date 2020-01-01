@@ -10,7 +10,9 @@ if __name__ == "__main__":
     from micro_tests.test_petri import TestPetri
     from micro_tests.test_log import TestLog
     from micro_tests.test_conv import TestConv
+    from micro_tests.test_vis import TestVis
     t1 = TestPetri()
     t2 = TestLog()
     t3 = TestConv()
+    t4 = TestVis()
     unittest.main()
