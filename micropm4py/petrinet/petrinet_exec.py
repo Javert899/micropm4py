@@ -30,8 +30,8 @@ def ex_trace(p, m, fm, tr):
 
 
 def main():
-    p = [["source", "p1", "sink"], [["A", {0: 1}, {1: 1}], ["B", {1: 1}, {2: 1}]]]
-    r = ex_trace(p, {0: 1}, {2: 1}, ["A", "B"])
+    p = [("source", "p1", "sink"), (("A", {0: 1}, {1: 1}), ("B", {1: 1}, {2: 1}))]
+    r = ex_trace(p, {0: 1}, {2: 1}, ("A", "B"))
     print(r)
 
 

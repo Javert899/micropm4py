@@ -41,7 +41,6 @@ def frm(net, im, fm):
     places = list(net.places)
     transitions = list(net.transitions)
     dp = {places[i]:i for i in range(len(places))}
-    dt = {transitions[i]:i for i in range(len(transitions))}
     for p in places:
         net0[0].append(p.name)
     for t in transitions:
@@ -58,4 +57,10 @@ def frm(net, im, fm):
         im0[dp[p]] = im[p]
     for p in fm:
         fm0[dp[p]] = fm[p]
+    net0[0] = tuple(net0[0])
+    i = 0
+    while i < len(net0[1]):
+        net0[1][i] = tuple(net0[1][i])
+        i = i + 1
+    net0[1] = tuple(net0[1])
     return net0, im0, fm0

@@ -47,7 +47,16 @@ def ip(n, im, fm, st, row):
         st[3] = True
     elif "<finalmark" in row:
         st[1] = True
-    return n, im, fm, st
+
+
+def finish_net(n, st):
+    n[0] = tuple(n[0])
+    i = 0
+    while i < len(n[1]):
+        n[1][i][0] = st[2][n[1][i][0]]
+        n[1][i] = tuple(n[1][i])
+        i = i + 1
+    n[1] = tuple(n[1])
 
 
 def main():
@@ -55,57 +64,53 @@ def main():
     im = {}
     fm = {}
     st = [False, False, {}, False, None]
-    n, im, fm, st = ip(n, im, fm, st, "<?xml version='1.0' encoding='UTF-8'?>")
-    n, im, fm, st = ip(n, im, fm, st, "<pnml>")
-    n, im, fm, st = ip(n, im, fm, st,
-                       "<net id=\"net1\" type=\"http://www.pnml.org/version-2009/grammar/pnmlcoremodel\">")
-    n, im, fm, st = ip(n, im, fm, st, "<page id=\"n0\">")
-    n, im, fm, st = ip(n, im, fm, st, "<place id=\"source\">")
-    n, im, fm, st = ip(n, im, fm, st, "<name>")
-    n, im, fm, st = ip(n, im, fm, st, "<text>source</text>")
-    n, im, fm, st = ip(n, im, fm, st, "</name>")
-    n, im, fm, st = ip(n, im, fm, st, "<initialMarking>")
-    n, im, fm, st = ip(n, im, fm, st, "<text>1</text>")
-    n, im, fm, st = ip(n, im, fm, st, "</initialMarking>")
-    n, im, fm, st = ip(n, im, fm, st, "</place>")
-    n, im, fm, st = ip(n, im, fm, st, "<place id=\"p1\">")
-    n, im, fm, st = ip(n, im, fm, st, "<name>")
-    n, im, fm, st = ip(n, im, fm, st, "<text>p1</text>")
-    n, im, fm, st = ip(n, im, fm, st, "</name>")
-    n, im, fm, st = ip(n, im, fm, st, "</place>")
-    n, im, fm, st = ip(n, im, fm, st, "<place id=\"sink\">")
-    n, im, fm, st = ip(n, im, fm, st, "<name>")
-    n, im, fm, st = ip(n, im, fm, st, "<text>sink</text>")
-    n, im, fm, st = ip(n, im, fm, st, "</name>")
-    n, im, fm, st = ip(n, im, fm, st, "</place>")
-    n, im, fm, st = ip(n, im, fm, st, "<transition id=\"A\">")
-    n, im, fm, st = ip(n, im, fm, st, "<name>")
-    n, im, fm, st = ip(n, im, fm, st, "<text>A</text>")
-    n, im, fm, st = ip(n, im, fm, st, "</name>")
-    n, im, fm, st = ip(n, im, fm, st, "</transition>")
-    n, im, fm, st = ip(n, im, fm, st, "<arc id=\"ac1\" source=\"source\" target=\"A\"/>")
-    n, im, fm, st = ip(n, im, fm, st, "<arc id=\"ac2\" source=\"A\" target=\"p1\"/>")
-    n, im, fm, st = ip(n, im, fm, st, "<transition id=\"B\">")
-    n, im, fm, st = ip(n, im, fm, st, "<name>")
-    n, im, fm, st = ip(n, im, fm, st, "<text>B</text>")
-    n, im, fm, st = ip(n, im, fm, st, "</name>")
-    n, im, fm, st = ip(n, im, fm, st, "</transition>")
-    n, im, fm, st = ip(n, im, fm, st, "<arc id=\"ac3\" source=\"p1\" target=\"B\"/>")
-    n, im, fm, st = ip(n, im, fm, st, "<arc id=\"ac4\" source=\"B\" target=\"sink\"/>")
-    n, im, fm, st = ip(n, im, fm, st, "</page>")
-    n, im, fm, st = ip(n, im, fm, st, "<finalmarkings>")
-    n, im, fm, st = ip(n, im, fm, st, "<marking>")
-    n, im, fm, st = ip(n, im, fm, st, "<place idref=\"sink\">")
-    n, im, fm, st = ip(n, im, fm, st, "<text>1</text>")
-    n, im, fm, st = ip(n, im, fm, st, "</place>")
-    n, im, fm, st = ip(n, im, fm, st, "</marking>")
-    n, im, fm, st = ip(n, im, fm, st, "</finalmarkings>")
-    n, im, fm, st = ip(n, im, fm, st, "</net>")
-    n, im, fm, st = ip(n, im, fm, st, "</pnml>")
-    i = 0
-    while i < len(n[1]):
-        n[1][i][0] = st[2][n[1][i][0]]
-        i = i + 1
+    ip(n, im, fm, st, "<?xml version='1.0' encoding='UTF-8'?>")
+    ip(n, im, fm, st, "<pnml>")
+    ip(n, im, fm, st, "<net id=\"net1\" type=\"http://www.pnml.org/version-2009/grammar/pnmlcoremodel\">")
+    ip(n, im, fm, st, "<page id=\"n0\">")
+    ip(n, im, fm, st, "<place id=\"source\">")
+    ip(n, im, fm, st, "<name>")
+    ip(n, im, fm, st, "<text>source</text>")
+    ip(n, im, fm, st, "</name>")
+    ip(n, im, fm, st, "<initialMarking>")
+    ip(n, im, fm, st, "<text>1</text>")
+    ip(n, im, fm, st, "</initialMarking>")
+    ip(n, im, fm, st, "</place>")
+    ip(n, im, fm, st, "<place id=\"p1\">")
+    ip(n, im, fm, st, "<name>")
+    ip(n, im, fm, st, "<text>p1</text>")
+    ip(n, im, fm, st, "</name>")
+    ip(n, im, fm, st, "</place>")
+    ip(n, im, fm, st, "<place id=\"sink\">")
+    ip(n, im, fm, st, "<name>")
+    ip(n, im, fm, st, "<text>sink</text>")
+    ip(n, im, fm, st, "</name>")
+    ip(n, im, fm, st, "</place>")
+    ip(n, im, fm, st, "<transition id=\"A\">")
+    ip(n, im, fm, st, "<name>")
+    ip(n, im, fm, st, "<text>A</text>")
+    ip(n, im, fm, st, "</name>")
+    ip(n, im, fm, st, "</transition>")
+    ip(n, im, fm, st, "<arc id=\"ac1\" source=\"source\" target=\"A\"/>")
+    ip(n, im, fm, st, "<arc id=\"ac2\" source=\"A\" target=\"p1\"/>")
+    ip(n, im, fm, st, "<transition id=\"B\">")
+    ip(n, im, fm, st, "<name>")
+    ip(n, im, fm, st, "<text>B</text>")
+    ip(n, im, fm, st, "</name>")
+    ip(n, im, fm, st, "</transition>")
+    ip(n, im, fm, st, "<arc id=\"ac3\" source=\"p1\" target=\"B\"/>")
+    ip(n, im, fm, st, "<arc id=\"ac4\" source=\"B\" target=\"sink\"/>")
+    ip(n, im, fm, st, "</page>")
+    ip(n, im, fm, st, "<finalmarkings>")
+    ip(n, im, fm, st, "<marking>")
+    ip(n, im, fm, st, "<place idref=\"sink\">")
+    ip(n, im, fm, st, "<text>1</text>")
+    ip(n, im, fm, st, "</place>")
+    ip(n, im, fm, st, "</marking>")
+    ip(n, im, fm, st, "</finalmarkings>")
+    ip(n, im, fm, st, "</net>")
+    ip(n, im, fm, st, "</pnml>")
+    finish_net(n, st)
     print(n)
     print(st)
     print(im)
