@@ -95,3 +95,22 @@ def get_nxt_unq_trace(it):
         line = it[3].readline()
     it[3].close()
     return None
+
+
+def imp_variants_from_file(file_path):
+    tr = None
+    p = None
+    vv = {}
+    on = 0
+    d = {}
+    F = open(file_path, "r")
+    line = F.readline()
+    while line:
+        tr, p, on = xes_import_traces.r(tr, p, on, line, d)
+        if tr is not None:
+            if tr[1] not in vv:
+                vv[tr[1]] = 0
+            vv[tr[1]] = vv[tr[1]] + 1
+        line = F.readline()
+    F.close()
+    return vv

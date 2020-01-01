@@ -82,7 +82,7 @@ def get_it_from_file(file_path):
 
 
 def get_nxt_trace(it):
-    line = it[3].readline()
+    line = get_line(it[3])
     tr = None
     p = None
     while line:
@@ -90,13 +90,13 @@ def get_nxt_trace(it):
         it[0] = on
         if tr is not None:
             return tr
-        line = it[3].readline()
+        line = get_line(it[3])
     it[3].close()
     return None
 
 
 def get_nxt_unq_trace(it):
-    line = it[3].readline()
+    line = get_line(it[3])
     tr = None
     p = None
     while line:
@@ -105,6 +105,25 @@ def get_nxt_unq_trace(it):
         if tr is not None and not tr[1] in it[2]:
             it[2].add(tr[1])
             return tr
-        line = it[3].readline()
+        line = get_line(it[3])
     it[3].close()
     return None
+
+
+def imp_variants_from_file(file_path):
+    tr = None
+    p = None
+    vv = {}
+    on = 0
+    d = {}
+    F = open(file_path, "r")
+    line = get_line(F)
+    while line:
+        tr, p, on = xes_import_traces.r(tr, p, on, line, d)
+        if tr is not None:
+            if tr[1] not in vv:
+                vv[tr[1]] = 0
+            vv[tr[1]] = vv[tr[1]] + 1
+        line = get_line(F)
+    F.close()
+    return vv

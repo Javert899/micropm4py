@@ -67,11 +67,30 @@ class TestLog(unittest.TestCase):
         while nxt:
             nxt = xes_import_traces_file.get_nxt_trace(it)
 
+    def test_log_iterator_standard(self):
+        it = xes_import_traces_file_standard.get_it_from_file("running-example.xes")
+        nxt = xes_import_traces_file_standard.get_nxt_trace(it)
+        while nxt:
+            nxt = xes_import_traces_file_standard.get_nxt_trace(it)
+
     def test_log_iterator_unique(self):
+        it = xes_import_traces_file.get_it_from_file("running-example.xes")
+        nxt = xes_import_traces_file.get_nxt_unq_trace(it)
+        while nxt:
+            nxt = xes_import_traces_file.get_nxt_unq_trace(it)
+
+    def test_log_iterator_unique_standard(self):
         it = xes_import_traces_file_standard.get_it_from_file("running-example.xes")
         nxt = xes_import_traces_file_standard.get_nxt_unq_trace(it)
         while nxt:
             nxt = xes_import_traces_file_standard.get_nxt_unq_trace(it)
+
+    def test_variants(self):
+        variants = xes_import_traces_file.imp_variants_from_file("running-example.xes")
+
+    def test_variants_standard(self):
+        variants = xes_import_traces_file_standard.imp_variants_from_file("running-example.xes")
+
 
 if __name__ == "__main__":
     unittest.main()
