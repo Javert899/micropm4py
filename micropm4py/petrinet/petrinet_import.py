@@ -11,7 +11,10 @@ def ip(n, im, fm, st, row):
         st[1] = False
     if st[0]:
         if "<text" in row:
-            st[2][n[1][-1][0]] = row.split("<text>")[1].split("</")[0]
+            tn = row.split("<text>")[1].split("</")[0]
+            if tn not in st[5]:
+                st[5][tn] = tn
+            st[2][n[1][-1][0]] = st[5][tn]
     elif st[3]:
         if "<text" in row:
             im[len(n[0]) - 1] = int(row.split("<text>")[1].split("</")[0])
@@ -63,7 +66,7 @@ def main():
     n = [[], []]
     im = {}
     fm = {}
-    st = [False, False, {}, False, None]
+    st = [False, False, {}, False, None, {}]
     ip(n, im, fm, st, "<?xml version='1.0' encoding='UTF-8'?>")
     ip(n, im, fm, st, "<pnml>")
     ip(n, im, fm, st, "<net id=\"net1\" type=\"http://www.pnml.org/version-2009/grammar/pnmlcoremodel\">")

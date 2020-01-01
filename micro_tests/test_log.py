@@ -61,5 +61,17 @@ class TestLog(unittest.TestCase):
         csv_export_traces_file.export_to_path(log, "ru.csv", ",", "case:concept:name", "concept:name")
         os.remove("ru.csv")
 
+    def test_log_iterator(self):
+        it = xes_import_traces_file.get_it_from_file("running-example.xes")
+        nxt = xes_import_traces_file.get_nxt_trace(it)
+        while nxt:
+            nxt = xes_import_traces_file.get_nxt_trace(it)
+
+    def test_log_iterator_unique(self):
+        it = xes_import_traces_file_standard.get_it_from_file("running-example.xes")
+        nxt = xes_import_traces_file_standard.get_nxt_unq_trace(it)
+        while nxt:
+            nxt = xes_import_traces_file_standard.get_nxt_unq_trace(it)
+
 if __name__ == "__main__":
     unittest.main()

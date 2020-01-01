@@ -73,3 +73,37 @@ def imp_dfg_file_sten(file_path):
     dfg[2] = tuple(dfg[2])
     dfg[3] = tuple(dfg[3])
     return dfg
+
+
+def get_it_from_file(file_path):
+    F = open(file_path, "r")
+    it = [None, None, 0, {}, set(), F]
+    return it
+
+
+def get_nxt_trace(it):
+    line = it[5].readline()
+    while line:
+        tr, p, on = xes_import_traces.r(it[0], it[1], it[2], line, it[3])
+        it[0] = tr
+        it[1] = p
+        it[2] = on
+        if tr is not None:
+            return tr
+        line = it[5].readline()
+    return None
+
+
+def get_nxt_unq_trace(it):
+    line = it[5].readline()
+    while line:
+        tr, p, on = xes_import_traces.r(it[0], it[1], it[2], line, it[3])
+        it[0] = tr
+        it[1] = p
+        it[2] = on
+        if tr is not None and not tr[1] in it[4]:
+            it[4].add(tr[1])
+            return tr
+        line = it[5].readline()
+    return None
+
