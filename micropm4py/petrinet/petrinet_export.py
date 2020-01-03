@@ -48,12 +48,12 @@ def export(net, im, fm):
 
 
 def main():
-    p = [("source", "p1", "sink"), (("A", {0: 1}, {1: 1}), ("B", {1: 1}, {2: 1}))]
+    p = [("source", "p1", "sink"), (("A", (0,), (1,)), ("B", (1,), (2,)))]
     export(p, {0: 1}, {2: 1})
 
 
 if __name__ == "__main__":
-    aa = time.ticks_ms()
+    #aa = time.ticks_ms()
     main()
-    bb = time.ticks_ms()
-    print(bb-aa)
+    #bb = time.ticks_ms()
+    #print(bb-aa)

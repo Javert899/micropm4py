@@ -35,17 +35,17 @@ def ip(n, im, fm, st, row):
                 if n[1][i][0] == ta:
                     break
                 i = i + 1
-            n[1][i][1][n[0].index(so)] = 1
+            n[1][i][1].append(n[0].index(so))
         else:
             i = 0
             while i < len(n[1]):
                 if n[1][i][0] == so:
                     break
                 i = i + 1
-            n[1][i][2][n[0].index(ta)] = 1
+            n[1][i][2].append(n[0].index(ta))
     elif "<transition" in row:
         st[0] = True
-        n[1].append([row.split("id=\"")[1].split("\"")[0], {}, {}])
+        n[1].append([row.split("id=\"")[1].split("\"")[0], [], []])
     elif "<initialMark" in row:
         st[3] = True
     elif "<finalmark" in row:
@@ -57,6 +57,8 @@ def finish_net(n, st):
     i = 0
     while i < len(n[1]):
         n[1][i][0] = st[2][n[1][i][0]]
+        n[1][i][1] = tuple(n[1][i][1])
+        n[1][i][2] = tuple(n[1][i][2])
         n[1][i] = tuple(n[1][i])
         i = i + 1
     n[1] = tuple(n[1])

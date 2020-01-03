@@ -23,9 +23,9 @@ def to(net0, im0, fm0):
     i = 0
     while i < len(net0[1]):
         for p in net0[1][i][1]:
-            petri_utils.utils.add_arc_from_to(dp[p], dt[i], net, weight=net0[1][i][1][p])
+            petri_utils.utils.add_arc_from_to(dp[p], dt[i], net)
         for p in net0[1][i][2]:
-            petri_utils.utils.add_arc_from_to(dt[i], dp[p], net, weight=net0[1][i][2][p])
+            petri_utils.utils.add_arc_from_to(dt[i], dp[p], net)
         i = i + 1
     for p in im0:
         im[dp[p]] = im0[p]
@@ -44,15 +44,15 @@ def frm(net, im, fm):
     for p in places:
         net0[0].append(p.name)
     for t in transitions:
-        net0[1].append([t.label, {}, {}])
+        net0[1].append([t.label, [], []])
         for a in t.in_arcs:
             p = a.source
-            w = a.weight
-            net0[1][-1][1][dp[p]] = w
+            #w = a.weight
+            net0[1][-1][1].append(dp[p])
         for a in t.out_arcs:
             p = a.target
-            w = a.weight
-            net0[1][-1][2][dp[p]] = w
+            #w = a.weight
+            net0[1][-1][2].append(dp[p])
     for p in im:
         im0[dp[p]] = im[p]
     for p in fm:
@@ -60,6 +60,8 @@ def frm(net, im, fm):
     net0[0] = tuple(net0[0])
     i = 0
     while i < len(net0[1]):
+        net0[1][i][1] = tuple(net0[1][i][1])
+        net0[1][i][2] = tuple(net0[1][i][2])
         net0[1][i] = tuple(net0[1][i])
         i = i + 1
     net0[1] = tuple(net0[1])

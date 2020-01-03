@@ -5,19 +5,19 @@ def exec(p, m, a):
     for t in p[1]:
         if t[0] == a:
             o = True
-            for p, v in t[1].items():
-                if p not in m or v < m[p]:
+            for p in t[1]:
+                if p not in m:
                     o = False
                     break
             if o:
-                for p, v in t[1].items():
-                    m[p] = m[p] - v
+                for p in t[1]:
+                    m[p] = m[p] - 1
                     if m[p] == 0:
                         del m[p]
-                for p, v in t[2].items():
+                for p in t[2]:
                     if p not in m:
                         m[p] = 0
-                    m[p] = m[p] + v
+                    m[p] = m[p] + 1
                 return m
 
 
@@ -30,13 +30,13 @@ def ex_trace(p, m, fm, tr):
 
 
 def main():
-    p = [("source", "p1", "sink"), (("A", {0: 1}, {1: 1}), ("B", {1: 1}, {2: 1}))]
+    p = [("source", "p1", "sink"), (("A", (0,), (1,)), ("B", (1,), (2,)))]
     r = ex_trace(p, {0: 1}, {2: 1}, ("A", "B"))
     print(r)
 
 
 if __name__ == "__main__":
-    aa = time.ticks_ms()
+    #aa = time.ticks_ms()
     main()
-    bb = time.ticks_ms()
-    print(bb-aa)
+    #bb = time.ticks_ms()
+    #print(bb-aa)
