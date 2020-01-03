@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+   <url>
+      <loc>https://www.micropm4py.org/</loc>
+      <lastmod>2020-01-01</lastmod>
+      <changefreq>monthly</changefreq>
+      <priority>0.8</priority>
+   </url>
+   <url>
+      <loc>https://www.micropm4py.org/documentation.html</loc>
+      <changefreq>weekly</changefreq>
+   </url>
+   <url>
+      <loc>https://www.micropm4py.org/hardware.html</loc>
+      <changefreq>monthly</changefreq>
+   </url>
+   <url>
+      <loc>https://www.micropm4py.org/installation.html</loc>
+      <changefreq>monthly</changefreq>
+   </url>
+   <url>
+      <loc>https://www.micropm4py.org/features.html</loc>
+      <changefreq>monthly</changefreq>
+   </url>
+   <url>
+      <loc>https://www.micropm4py.org/contributors.html</loc>
+      <changefreq>monthly</changefreq>
+   </url>
+</urlset>
