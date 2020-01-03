@@ -42,6 +42,7 @@
 	<li><a href="#dfg">Working with DFGs</a></li>
 	<li><a href="#petri1">Petri Nets - Importing/Exporting/Visualization</a></li>
 	<li><a href="#petri2">Petri Nets - Execution semantics</a></li>
+	<li><a href="#discovery">Algorithms for Petri Nets discovery</a></li>
 	</ul>
 	<div id="xes">
 	<h5>Importing/exporting XES files</h5>
@@ -52,7 +53,9 @@
 	<ul>
 	<li>Importing a XES file as a list of cases (assuming one tag per row in the XML file).</li>
 	<li>(Standard importer; works always albeit is slower) importing the XES as a list of cases.</li>
-	<li>Importing the XES as a DFG object.
+	<li>Importing the XES as a DFG object.</li>
+	<li>Importing a XES as a dictionary of variants.</li>
+	<li>Importing XES piece-by-piece with an iterator.</li>
 	</ul>
 	In the following, an example of the format in which the log is stored in memory is reported.
 	Within this data structure, no further compression of strings is done (while the DFG object is optimized to minimize the memory footprint).
@@ -80,6 +83,21 @@
         from micropm4py.log import xes_import_traces_file_standard<br />
 	dfg = xes_import_traces_file_standard.imp_dfg_file('micro_tests/running-example.xes')
 	</div>
+	To import a dictionary of variants from the XES, without need to store all the event log, the following code can be used.
+	<div style="background-color: black; color: white; width: 100%">
+	from micropm4py.log import xes_import_traces_file_standard<br />
+	variants = xes_import_traces_file_standard.imp_variants_from_file('micro_tests/running-example.xes')
+	</div>
+	The dictionary of variants for the running-example log looks as follow:
+        <div style="background-color: black; color: white; width: 100%">
+	{('register request', 'examine casually', 'check ticket', 'decide', 'pay compensation'): 1, ('register request', 'examine casually', 'check ticket', 'decide', 'reinitiate request', 'check ticket', 'examine casually', 'decide', 'reinitiate request', 'examine casually', 'check ticket', 'decide', 'reject request'): 1, ('register request', 'examine casually', 'check ticket', 'decide', 'reinitiate request', 'examine thoroughly', 'check ticket', 'decide', 'pay compensation'): 1, ('register request', 'check ticket', 'examine thoroughly', 'decide', 'reject request'): 1, ('register request', 'examine thoroughly', 'check ticket', 'decide', 'reject request'): 1, ('register request', 'check ticket', 'examine casually', 'decide', 'pay compensation'): 1}
+	</div>
+	It is possible to import the log trace-by-trace using an iterator pattern. There are two types of iterations that are possible in MicroPM4Py:
+	<ul>
+	<li>Iterate trace-by-trace the XES (without caring for uniqueness; this option is also the most memory efficient)</li>
+	<li>Iterate on the unique traces of the XES file</li>
+	</ul>
+	<p>Two examples for such iterations have been proposed in the <b>examples</b> folder (<b>xes_example_iterator</b> and <b>xes_example_it_unique</b>).</p>
 	</div>
 	<br />
 	<div id="csv">
@@ -250,9 +268,71 @@
         m = copy.copy(im)<br />
         res = petrinet_exec.ex_trace(net, m, fm, ['register request', 'examine casually', 'check ticket', 'decide'])<br />
         print(res)
-        </div>
-
+        </div>	
 	</div>
+	<br />
+	<div id="discovery">
+	<h5>Algorithms for Petri Nets discovery</h5>
+	<p>In MicroPM4Py, we offer the DFG mining approach to convert the DFG into a sound workflow net with duplicate transitions and arc weights equal to 1.</p>
+	<p>The algorithm is described <a href="#" target="_blank">here</a>. The only limitation of this implementation (since the Petri Nets in MicroPM4Py do not
+	support invisibles) is that only DFGs with an unique start and end activity are supported.</p>
+	<p>Essentially, the previous conditions can be obtained in any event log inserting the artificial start and end activities (in MicroPM4Py, they are denoted as
+	>> and []).</p>
+	<p>To import a XES log directly into a DFG with artificial start/end activities, the following code can be used:</p>
+	<div style="background-color: black; color: white; width: 100%">
+        from micropm4py.log import xes_import_traces_file_standard<br />
+        dfg = xes_import_traces_file_standard.imp_dfg_file_sten('micro_tests/running-example.xes')
+        </div>
+	The DFG mining algorithm can be applied as in the following code snippet:
+	<div style="background-color: black; color: white; width: 100%">
+	from micropm4py.conversion.dfg import dfg_mining<br />
+	net, im, fm = dfg_mining.apply(dfg)
+	</div>
+	<p>The result is an accepting Petri net that can be used anywhere in MicroPM4Py.</p>
+	</div>
+	<br />
+	<div id="conversion">
+	<h5>Conversions from/to PM4Py</h5>
+	<p>The MicroPM4Py is easily interoperable with the PM4Py library. Most objects in MicroPM4Py can be converted from/to objects of PM4Py.</p>
+	<p>To convert from/to PM4Py objects, obviously PM4Py needs to be also installed.</p>
+	<p><b>MicroPM4Py DFG => PM4Py DFG</b> the following code snippet can be used:
+        <div style="background-color: black; color: white; width: 100%">
+        from micropm4py.conversion.pm4py import dfg as dfg_conv<br />
+	dfg_pm4, acti_count, start_activities, end_activities = dfg_conv.to(dfg_mp)
+	</div>
+	where:
+	<ul>
+	<li>The first element is the dictionary of activities following each other.</li>
+	<li>The second element contains the number of occurrences of the activities.</li>
+	<li>The third element is the set of start activities of the log.</li>
+	<li>The fourth element is the set of end activities of the log.</li>
+	</ul>
+	</p>
+	<p><b>MicroPM4Py log => PM4Py log</b> the following code snippet can be used (here, the <b>log</b> is the PM4Py log, and the <b>log0</b> is the MicroPM4Py log):
+        <div style="background-color: black; color: white; width: 100%">
+	from micropm4py.log import xes_import_traces_file<br />
+	log = traces.to(log0)
+	</div>
+	</p>
+	<p><b>PM4Py log => MicroPM4Py log</b> the following code snippet can be used (here, the <b>log</b> is the PM4Py log, and the <b>log1</b> is the MicroPM4Py log):
+        <div style="background-color: black; color: white; width: 100%">
+	from micropm4py.log import xes_import_traces_file<br />
+	log1 = traces.frm(log)
+	</div>
+	</p>
+	<p><b>MicroPM4Py Petri net => PM4Py Petri net</b> the following code snippet can be used (here, the <b>net</b> is the PM4Py Petri net, and the <b>net0</b> is the MicroPM4Py Petri net):
+        <div style="background-color: black; color: white; width: 100%">
+	from micropm4py.conversion.pm4py import petri<br />
+	net, im, fm = petri.to(net0, im0, fm0)
+	</div>
+	</p>
+	<p><b>PM4Py Petri net => MicroPM4Py Petri net</b> the following code snippet can be used (here, the <b>net</b> is the PM4Py Petri net, and the <b>net1</b> is the MicroPM4Py Petri net):
+        <div style="background-color: black; color: white; width: 100%">
+	from micropm4py.conversion.pm4py import petri<br />
+	net1, im1, fm1 = petri.frm(net, im, fm)
+	</div>
+	</div>
+	<br />
     </div>
   </div>
 </div>
