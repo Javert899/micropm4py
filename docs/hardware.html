@@ -41,6 +41,110 @@
 	</div>
 	<p><b>MicroPM4Py</b> has been tested at less than 1 MHz on the <b><a href="https://micropython.org/unicorn/" target="_blank">Unicorn emulator</a></b> (CPU: Cortex M3, stack: 8 kb, RAM: 64 kb).</p>
 	<p><b>MicroPM4Py</b> has been physically tested on a Raspberry Pi 3 B+ (4xA53 @ 1.4 GHz, 1 GB LPDDR2 RAM).</p>
+	<p>The following table estimates the RAM occupation (in bytes) of the three log structures in MicroPM4Py (version 0.0.10): reading the DFG from the XES; reading the variants; reading all the traces from the log.
+	Generally, the numbers are competitive and among the most efficient XES importers ever done (remind the limitation: only the case ID and the activity is read).</p>
+<table class="table">
+<thead>
+<tr>
+<th scope="col">Log name</th><th>DFG obj size</th><th>Variants obj size</th><th>Loaded log obj size</th></tr>
+</thead>
+<tbody>
+<tr>
+<th scope="row">running-example</td><td>3200</td><td>1568</td><td>2016</td></tr>
+<tr>
+<th scope="row">receipt</td><td>17112</td><td>22072</td><td>213352</td></tr>
+<tr>
+<th scope="row">roadtraffic</td><td>10696</td><td>37984</td><td>19392280</td></tr>
+<tr>
+<th scope="row">LevelA1.xes</td><td>6456</td><td>16368</td><td>154792</td></tr>
+<tr>
+<th scope="row">BPIC17.xes</td><td>29240</td><td>7528144</td><td>11474448</td></tr>
+<tr>
+<th scope="row">BPIC15_4.xes</td><td>453552</td><td>488200</td><td>587656</td></tr>
+<tr>
+<th scope="row">BPIC17 - Offer log.xes</td><td>3768</td><td>2992</td><td>6051880</td></tr>
+<tr>
+<th scope="row">BPIC13_incidents.xes</td><td>2696</td><td>380216</td><td>1333200</td></tr>
+<tr>
+<th scope="row">BPIC15_3.xes</td><td>600304</td><td>600312</td><td>743656</td></tr>
+<tr>
+<th scope="row">BPIC15_1.xes</td><td>541824</td><td>534216</td><td>652696</td></tr>
+<tr>
+<th scope="row">BPIC15_5.xes</td><td>555776</td><td>589688</td><td>703712</td></tr>
+<tr>
+<th scope="row">BPIC12.xes</td><td>20664</td><td>1819848</td><td>3352352</td></tr>
+<tr>
+<th scope="row">BPIC13_closed_problems.xes</td><td>2320</td><td>33504</td><td>226856</td></tr>
+<tr>
+<th scope="row">BPIC15_2.xes</td><td>551656</td><td>457496</td><td>531176</td></tr>
+<tr>
+<th scope="row">BPIC13_open_problems.xes</td><td>1872</td><td>16096</td><td>122672</td></tr>
+</tbody>
+</table>
+	<p>The following table estimates the memory usage of an use case of MicroPM4Py (version 0.0.10): from a log, the DFG is obtained and the DFG mining technique is applied to obtain a Petri net. Then, an iterator is created on the log, in order to iterate over the single traces of the log. The memory usage of the MicroPM4Py module and data structure is then measured.
+	The following aspects are taken into account (estimations were done on a X86-64 Debian 9 with Miniconda Python 3.7):</p>
+	<ul>
+	<li>The maximum size of the iterator+current trace (in bytes)</li>
+	<li>The size of the DFG-mined Petri net (in bytes)</li>
+	<li>The size of the MicroPM4Py Python module (in bytes)</li>
+	<li>An estimated overapproximated size (16 KB) of a kernel + Micropython interpeter running on a microcontroller (in bytes)</li>
+	</ul>
+	<p>The values are summed to get an estimation of the memory usage of the application for such use case, for several real-life logs. Except for the BPIC 2015 logs, the memory allocation is always under 128 KB! :)</p>
+<table class="table">
+<thead>
+<tr>
+<th scope="col">Log name</th><th scope="col">Max XES iterable size</th><th scope="col">DFG mining net size</th><th scope="col">MicroPM4Py module size</th><th scope="col">MicroPython size (est.max.)</th>
+<th scope="col">MAX EST. SIZE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th scope="row">running-example</td><td>2512</td><td>6384</td><td>20624</td><td>16384</td><td>45904</td>
+</tr>
+<tr>
+<th scope="row">receipt</td><td>6312</td><td>27328</td><td>20624</td><td>16384</td><td>70648</td>
+</tr>
+<tr>
+<th scope="row">roadtraffic</td><td>3416</td><td>18104</td><td>20624</td><td>16384</td><td>58528</td>
+</tr>
+<tr>
+<th scope="row">LevelA1.xes</td><td>3656</td><td>9952</td><td>20624</td><td>16384</td><td>50616</td>
+</tr>
+<tr>
+<th scope="row">BPIC17.xes</td><td>6664</td><td>41352</td><td>20624</td><td>16384</td><td>85024</td>
+</tr>
+<tr>
+<th scope="row">BPIC15_4.xes</td><td>49560</td><td>757680</td><td>20624</td><td>16384</td><td>844248</td>
+</tr>
+<tr>
+<th scope="row">BPIC17 - Offer log.xes</td><td>2392</td><td>6760</td><td>20624</td><td>16384</td><td>46160</td>
+</tr>
+<tr>
+<th scope="row">BPIC13_incidents.xes</td><td>2696</td><td>5352</td><td>20624</td><td>16384</td><td>45056</td>
+</tr>
+<tr>
+<th scope="row">BPIC15_3.xes</td><td>49912</td><td>1084872</td><td>20624</td><td>16384</td><td>1171792</td>
+</tr>
+<tr>
+<th scope="row">BPIC15_1.xes</td><td>51592</td><td>993800</td><td>20624</td><td>16384</td><td>1082400</td>
+</tr>
+<tr>
+<th scope="row">BPIC15_5.xes</td><td>54048</td><td>1027648</td><td>20624</td><td>16384</td><td>1118704</td>
+</tr>
+<tr>
+<th scope="row">BPIC12.xes</td><td>6368</td><td>30744</td><td>20624</td><td>16384</td><td>74120</td>
+</tr>
+<tr>
+<th scope="row">BPIC13_closed_problems.xes</td><td>2056</td><td>5160</td><td>20624</td><td>16384</td><td>44224</td>
+</tr>
+<tr>
+<th scope="row">BPIC15_2.xes</td><td>54080</td><td>1012512</td><td>20624</td><td>16384</td><td>1103600</td>
+</tr>
+<tr>
+<th scope="row">BPIC13_open_problems.xes</td><td>1864</td><td>4480</td><td>20624</td><td>16384</td><td>43352</td>
+</tr>
+</tbody>
+</table>
     </div>
   </div>
 </div>
