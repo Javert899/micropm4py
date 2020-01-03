@@ -53,7 +53,7 @@ def main():
 
 
 if __name__ == "__main__":
-    #aa = time.ticks_ms()
+    aa = time.ticks_ms()
     main()
-    #bb = time.ticks_ms()
-    #print(bb-aa)
+    bb = time.ticks_ms()
+    print(bb-aa)
