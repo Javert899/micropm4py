@@ -21,10 +21,15 @@ def test_log(log_name, log_path):
     print("done",log_name)
 
 
-for log_name in os.listdir("cert_art"):
-    log_path = os.path.join("cert_art", log_name)
-    test_log(log_name, log_path)
+def main():
+    for log_name in os.listdir("cert_art"):
+        log_path = os.path.join("cert_art", log_name)
+        test_log(log_name, log_path)
 
-for log_name in os.listdir("cert_real"):
-    log_path = os.path.join("cert_real", log_name)
-    test_log(log_name, log_path)
+    for log_name in os.listdir("cert_real"):
+        log_path = os.path.join("cert_real", log_name)
+        test_log(log_name, log_path)
+
+
+if __name__ == "__main__":
+    main()
