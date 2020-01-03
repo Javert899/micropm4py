@@ -8,6 +8,7 @@ class Shared:
 
 
 def test_log(log_name, log_path):
+    print("xes_certific_mem_iterab", log_name)
     dfg = micropm4py.log.xes_import_traces_file_standard.imp_dfg_file_sten(log_path)
     net, im, fm = micropm4py.conversion.dfg.dfg_mining.apply(dfg)
     it = micropm4py.log.xes_import_traces_file_standard.get_it_from_file(log_path)
@@ -68,7 +69,7 @@ def main2():
 
 
 if __name__ == "__main__":
-    #main2()
-    #main()
-    #save_table("result_iter.html")
+    main2()
+    main()
+    save_table("result_iter.html")
     pass
