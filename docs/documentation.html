@@ -150,12 +150,12 @@
 	<h5>Petri Nets - Importing/Exporting/Visualization</h5>
 	<p>Petri Nets are a widely used class of models in the process mining world. In MicroPM4Py, we offer support for importing/exporting/visualizing <b>accepting</b> Petri nets (that are Petri nets along with an initial and a final marking).</p>
 	<p>A limitation of the implementation is the lack of compatibility for invisible transitions. Duplicate visible transitions are instead supported.</p>
-	<p>Another limitation of the import/export from PNML is the support for arc weights equal to 1.</p>
-	<p>The data structure hosting the Petri nets in MicroPM4Py is reported in the following example. The first tuple contains the names of the places (the example contains 3 places, the source place, the sink place and a place named p1). The second tuple contains the transitions. Each transition is a (sub)tuple where the first element is the label of the transition, the second element is the preset of the transition (the key is the index of the place in the first sublist, the value is the arc weight), the third element is the postset of the transition (described in an analogous way as the preset).</p>
+	<p>Another limitation is the support for arc weights equal to 1 (this was originally a limitation only of the importing, but the resulting in-memory structure is way more efficient without the specification of 1 as arc weight).</p>
+	<p>The data structure hosting the Petri nets in MicroPM4Py is reported in the following example. The first tuple contains the names of the places (the example contains 3 places, the source place, the sink place and a place named p1). The second tuple contains the transitions. Each transition is a (sub)tuple where the first element is the label of the transition, the second element is the preset of the transition (a tuple containing the places consumed, with weight 1, from the preset), the third element is the postset of the transition (described in an analogous way as the preset).</p>
 	<div style="background-color: black; color: white; width: 100%">
-	[("source", "p1", "sink"), (("A", {0: 1}, {1: 1}), ("B", {1: 1}, {2: 1}))]
+	[('source', 'p1', 'sink'), (('A', (0,), (1,)), ('B', (1,), (2,)))]
 	</div>
-	<p>The structure of the initial/final marking is a dictionary (which structure is identical to the one of the preset/postset of a transition). As example:</p>
+	<p>The structure of the initial/final marking is a dictionary (which structure is a dictionary associating a place with the number of tokens in the place). As example:</p>
         <div style="background-color: black; color: white; width: 100%">
 	{0: 1}
 	</div>
@@ -221,10 +221,10 @@
 	</div>
 	Then, let's try to execute the following list of activities: examine casually, check ticket, decide, pay compensation. That should lead to the final marking of the process model.
         <div style="background-color: black; color: white; width: 100%">
-	petrinet_exec.exec(net, m, "examine casually")<br />
-    	petrinet_exec.exec(net, m, "check ticket")<br />
-    	petrinet_exec.exec(net, m, "decide")<br />
-    	petrinet_exec.exec(net, m, "pay compensation")
+	petrinet_exec.exec(net, m, 'examine casually')<br />
+    	petrinet_exec.exec(net, m, 'check ticket')<br />
+    	petrinet_exec.exec(net, m, 'decide')<br />
+    	petrinet_exec.exec(net, m, 'pay compensation')
 	</div>
 	This is exactly what happens:
 	<div style="background-color: black; color: white; width: 100%">
