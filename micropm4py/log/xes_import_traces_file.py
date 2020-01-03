@@ -73,7 +73,7 @@ def get_nxt_trace(it):
     tr = None
     p = None
     while line:
-        tr, p, on = xes_import_traces.r(tr, p, it[0], line, it[1])
+        tr, p, on = xes_import_traces.r(tr, p, it[0], line, {})
         it[0] = on
         if tr is not None:
             return tr
