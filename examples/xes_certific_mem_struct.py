@@ -8,6 +8,7 @@ class Shared:
 
 
 def test_log(log_name, log_path):
+    print("xes_certific_mem_struct", log_name)
     log = micropm4py.log.xes_import_traces_file_standard.imp_list_traces_from_file(log_path)
     dfg = micropm4py.log.xes_import_traces_file_standard.imp_dfg_file(log_path)
     variants = micropm4py.log.xes_import_traces_file_standard.imp_variants_from_file(log_path)
@@ -27,6 +28,7 @@ def main():
 def main2():
     test_log("running-example", "../micro_tests/running-example.xes")
     test_log("receipt", "../../receipt.xes")
+    test_log("roadtraffic", "../../roadtraffic.xes")
 
 
 def save_table(target_html):
@@ -54,7 +56,7 @@ def save_table(target_html):
 
 
 if __name__ == "__main__":
-    #main2()
-    #main()
-    #save_table("results_iter.html")
+    main2()
+    main()
+    save_table("result_mem.html")
     pass
