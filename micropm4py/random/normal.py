@@ -40,7 +40,7 @@ def cdf(x, mu, sig):
 def getv(mu, sig):
     v1 = gen()
     v2 = gen()
-    return math.cos(2*math.pi*v2)*math.sqrt(-2.0*math.log(v1))
+    return mu + sig*math.cos(2*math.pi*v2)*math.sqrt(-2.0*math.log(v1))
 
 
 def main():
