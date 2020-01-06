@@ -26,6 +26,10 @@ def getv(lam):
 
 
 def main():
+    print("pdf")
+    print(pdf(1.0, 1.0))
+    print("cdf")
+    print(cdf(1.0, 1.0))
     i = 0
     while i < 10:
         print(getv(1.0))
