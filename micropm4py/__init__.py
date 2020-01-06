@@ -1,4 +1,4 @@
-from micropm4py import log, petrinet, util, conversion, visualization
+from micropm4py import log, petrinet, util, conversion, visualization, random
 
 __version__ = '0.1'
 __doc__ = "MicroPM4Py - Process Mining for Micro-Controllers"
