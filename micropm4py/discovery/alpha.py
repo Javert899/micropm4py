@@ -139,7 +139,7 @@ def alpha(dfg):
             if i in pls[j][0]:
                 tr[2].append(j+2)
             if i in pls[j][1]:
-                tr[1].append(j+1)
+                tr[1].append(j+2)
             j = j + 1
         if i in dfg[2]:
             tr[1].append(0)
