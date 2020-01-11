@@ -8,19 +8,20 @@ def causal(dfg):
         itms.append(el)
     i = 0
     while i < len(itms):
-        rev_tup = (itms[i][1], itms[i][0])
-        j = i + 1
-        found = -1
-        while j < len(itms):
-            if rev_tup == itms[j]:
-                found = j
-            j = j + 1
-        if found >= 0:
-            c[1].append(itms[i])
-            c[1].append(itms[found])
-            del itms[found]
-        else:
-            c[0].append(itms[i])
+        if not itms[i][0] == itms[i][1]:
+            rev_tup = (itms[i][1], itms[i][0])
+            j = i + 1
+            found = -1
+            while j < len(itms):
+                if rev_tup == itms[j]:
+                    found = j
+                j = j + 1
+            if found >= 0:
+                c[1].append(itms[i])
+                c[1].append(itms[found])
+                del itms[found]
+            else:
+                c[0].append(itms[i])
         i = i + 1
     c[0] = tuple(c[0])
     c[1] = tuple(c[1])
