@@ -273,7 +273,27 @@
 	<br />
 	<div id="discovery">
 	<h5>Algorithms for Petri Nets discovery</h5>
-	<p>In MicroPM4Py, we offer the DFG mining approach to convert the DFG into a sound workflow net with duplicate transitions and arc weights equal to 1.</p>
+		<p><b>Alpha Miner</b>: in MicroPM4Py, we offer the well-known Alpha Miner algorithm to discover a process model.
+		The input data structure is the DFG as described previously.</p>
+		<p>In the following, we try to provide an example of application of the Alpha Miner to the running example log.</p>
+		<p>First, the DFG needs to be calculated/imported from the log:</p>
+		<div style="background-color: black; color: white; width: 100%">
+			from micropm4py.log import xes_import_traces_file<br />
+			dfg = xes_import_traces_file.imp_dfg_file('micro_tests/running-example.xes')
+        </div>
+		Then, we can apply the Alpha Miner algorithm to retrieve a Petri net along with an initial
+		and a final marking:
+		<div style="background-color: black; color: white; width: 100%">
+			from micropm4py.discovery import alpha<br />
+			net, im, fm = alpha.alpha(dfg)
+		</div>
+		We could also provide a visualization (DOT format) of such Petri net:
+			<div style="background-color: black; color: white; width: 100%">
+				from micropm4py.visualization import petri_print<br />
+				petri_print.print_dot(net)
+			</div>
+		<p></p>
+	<p><b>DFG mining</b>: in MicroPM4Py, we offer the DFG mining approach to convert the DFG into a sound workflow net with duplicate transitions and arc weights equal to 1.</p>
 	<p>The algorithm is described <a href="#" target="_blank">here</a>. The only limitation of this implementation (since the Petri Nets in MicroPM4Py do not
 	support invisibles) is that only DFGs with an unique start and end activity are supported.</p>
 	<p>Essentially, the previous conditions can be obtained in any event log inserting the artificial start and end activities (in MicroPM4Py, they are denoted as
