@@ -1,3 +1,6 @@
+import time
+
+# RAN ON CORTEX M3, 64kb RAM
 def causal(dfg):
     c = [[], []]
     itms = []
@@ -154,3 +157,19 @@ def alpha(dfg):
     net[1] = tuple(net[1])
     net = tuple(net)
     return net, im, fm
+
+
+def main():
+    dfg = [("A", "B", "C"), {0:1, 1:1, 2:1}, tuple({0}), tuple({2}), {(0, 1): 1, (1, 2): 1}]
+    n, im, fm = alpha(dfg)
+    print(n)
+    print(im)
+    print(fm)
+
+
+if __name__ == "__main__":
+    aa = time.ticks_ms()
+    main()
+    bb = time.ticks_ms()
+    print(bb-aa)
+
