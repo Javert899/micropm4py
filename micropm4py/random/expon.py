@@ -22,7 +22,7 @@ def cdf(x, lam):
 
 
 def getv(lam):
-    return -lam*math.log(1.0 - gen())
+    return -1.0/lam*math.log(1.0 - gen())
 
 
 def main():
@@ -32,7 +32,7 @@ def main():
     print(cdf(1.0, 1.0))
     i = 0
     while i < 10:
-        print(getv(1.0))
+        print(getv(1.0/10.0))
         i = i + 1
 
 
