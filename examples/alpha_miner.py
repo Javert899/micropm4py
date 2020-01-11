@@ -18,7 +18,7 @@ def main():
     it = xes_import_traces_file.get_it_from_file(log_path)
     nxt = xes_import_traces_file.get_nxt_trace(it)
     while nxt:
-        print(nxt[1], petrinet_exec.ex_trace(net, copy.copy(im), copy.copy(fm), nxt[1]))
+        print(petrinet_exec.ex_trace(net, copy.copy(im), copy.copy(fm), nxt[1]), nxt[1])
         nxt = xes_import_traces_file.get_nxt_trace(it)
     cc = time.time()
     print(cc-bb)
