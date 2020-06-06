@@ -34,14 +34,6 @@ POSITION_MARKING = 5
 POSITION_EN_T = 6
 
 
-class TransfMarking(dict):
-    def __hash__(self):
-        r = 0
-        for p in self.items():
-            r += 31 * hash(p[0]) * p[1]
-        return r
-
-
 def apply(trace, net, im, fm, model_cost_function=None, trace_cost_function=None, ret_tuple_as_trans_desc=False):
     """
     Apply alignments using the Dijkstra approach
@@ -121,12 +113,10 @@ def __transform_model_to_mem_efficient_structure(net, im, fm, model_cost_functio
     while i < len(net[1]):
         trans_labels_dict[i] = labels_dict[net[1][i][0]]
         i = i + 1
-    transf_im = TransfMarking(im)
-    transf_fm = TransfMarking(fm)
 
     return {TRANSF_MODEL_COST_FUNCTION: model_cost_function, TRANS_PRE_DICT: trans_pre_dict,
-            TRANS_POST_DICT: trans_post_dict, TRANSF_IM: transf_im,
-            TRANSF_FM: transf_fm, LABELS_DICT: labels_dict, TRANS_LABELS_DICT: trans_labels_dict}
+            TRANS_POST_DICT: trans_post_dict, TRANSF_IM: im,
+            TRANSF_FM: fm, LABELS_DICT: labels_dict, TRANS_LABELS_DICT: trans_labels_dict}
 
 
 def __transform_trace_to_mem_efficient_structure(trace, model_struct, trace_cost_function=None):
@@ -222,29 +212,7 @@ def __fire_trans(m, preset, postset):
             ret[k] = postset[k]
         else:
             ret[k] = ret[k] + postset[k]
-    return TransfMarking(ret)
-
-
-def __get_marking(marking_dict, m):
-    """
-    Gets a marking from a dictionary to avoid
-    allocating two objects for the same marking
-
-    Parameters
-    --------------
-    marking_dict
-        Marking dictionary
-    m
-        Marking
-
-    Returns
-    --------------
-    m
-        Marking (equivalent to the one provided)
-    """
-    if m not in marking_dict:
-        marking_dict[m] = m
-    return marking_dict[m]
+    return ret
 
 
 def __dijkstra(model_struct, trace_struct, net, sync_cost=0, max_align_time_trace=10000000,
@@ -287,9 +255,8 @@ def __dijkstra(model_struct, trace_struct, net, sync_cost=0, max_align_time_trac
     transf_trace = trace_struct[TRANSF_TRACE]
     trace_cost_function = trace_struct[TRACE_COST_FUNCTION]
 
-    marking_dict = {}
-    im = __get_marking(marking_dict, model_struct[TRANSF_IM])
-    fm = __get_marking(marking_dict, model_struct[TRANSF_FM])
+    im = model_struct[TRANSF_IM]
+    fm = model_struct[TRANSF_FM]
 
     # each state is characterized by:
     # position 0 (POSITION_TOTAL_COST): total cost of the state
@@ -307,7 +274,6 @@ def __dijkstra(model_struct, trace_struct, net, sync_cost=0, max_align_time_trac
     open_set = [initial_state]
     heapq.heapify(open_set)
 
-    closed = set()
     dummy_count = 0
     visited = 0
 
@@ -315,12 +281,7 @@ def __dijkstra(model_struct, trace_struct, net, sync_cost=0, max_align_time_trac
         if (time.time() - start_time) > max_align_time_trace:
             return None
         curr = heapq.heappop(open_set)
-        # if a situation equivalent to the one of the current state has been
-        # visited previously, then discard this
-        if (curr[POSITION_INDEX], curr[POSITION_MARKING]) in closed:
-            continue
         visited = visited + 1
-        closed.add((curr[POSITION_INDEX], curr[POSITION_MARKING]))
         if curr[POSITION_MARKING] == fm:
             if -curr[POSITION_INDEX] == len(transf_trace):
                 # returns the alignment only if the final marking has been reached AND
@@ -335,26 +296,19 @@ def __dijkstra(model_struct, trace_struct, net, sync_cost=0, max_align_time_trac
                 is_sync = trans_labels_dict[t] == transf_trace[-curr[POSITION_INDEX]] if -curr[POSITION_INDEX] < len(
                     transf_trace) else False
                 # virtually fires the transition to get a new marking
-                new_m = __get_marking(marking_dict,
-                                      __fire_trans(curr[POSITION_MARKING], trans_pre_dict[t], trans_post_dict[t]))
+                new_m = __fire_trans(curr[POSITION_MARKING], trans_pre_dict[t], trans_post_dict[t])
                 if is_sync:
                     dummy_count = dummy_count + 1
                     new_state = (
                         curr[POSITION_TOTAL_COST] + sync_cost, curr[POSITION_INDEX] - 1, IS_SYNC_MOVE, dummy_count,
                         curr,
                         new_m, t)
-                    if (new_state[POSITION_INDEX], new_state[POSITION_MARKING]) not in closed:
-                        # if it can be executed in a sync way, add a new state corresponding
-                        # to the sync execution only if it has not already been closed
-                        heapq.heappush(open_set, new_state)
+                    heapq.heappush(open_set, new_state)
                 dummy_count = dummy_count + 1
                 new_state = (
                     curr[POSITION_TOTAL_COST] + transf_model_cost_function[t], curr[POSITION_INDEX], IS_MODEL_MOVE,
                     dummy_count, curr, new_m, t)
-                if (new_state[POSITION_INDEX], new_state[POSITION_MARKING]) not in closed:
-                    # add a model move anyway :) (also if sync execution has been possible)
-                    # also here, checks if it is closed
-                    heapq.heappush(open_set, new_state)
+                heapq.heappush(open_set, new_state)
         # IMPORTANT: to reduce the complexity, assume that you can schedule a log move
         # only if the previous move has not been a move-on-model.
         # since this setting is equivalent to scheduling all the log moves before and then
@@ -364,9 +318,7 @@ def __dijkstra(model_struct, trace_struct, net, sync_cost=0, max_align_time_trac
             new_state = (
                 curr[POSITION_TOTAL_COST] + trace_cost_function[-curr[POSITION_INDEX]], curr[POSITION_INDEX] - 1,
                 IS_LOG_MOVE, dummy_count, curr, curr[POSITION_MARKING], None)
-            if (new_state[POSITION_INDEX], new_state[POSITION_MARKING]) not in closed:
-                # adds the log move only if it has not been already closed before
-                heapq.heappush(open_set, new_state)
+            heapq.heappush(open_set, new_state)
 
 
 def __reconstruct_alignment(curr, model_struct, trace_struct, visited, net, ret_tuple_as_trans_desc=False):

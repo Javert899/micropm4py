@@ -14,7 +14,8 @@ def main():
     aa = time.time()
     i = 0
     while i < len(log):
-        align = alignments.apply(log[i], net, im, fm, ret_tuple_as_trans_desc=True)
+        align = alignments.apply(log[i], net, im, fm, ret_tuple_as_trans_desc=False)
+        print(align)
         i = i + 1
     bb = time.time()
     print(bb - aa)
