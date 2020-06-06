@@ -8,7 +8,7 @@ import os
 
 def main():
     log = xes_import_traces_file.imp_list_traces_from_file(os.path.join("..", "micro_tests", "running-example.xes"))
-    log = xes_import_traces_file.imp_list_traces_from_file("C:/reviewing.xes")
+    #log = xes_import_traces_file.imp_list_traces_from_file("C:/reviewing.xes")
     dfg = traces_to_dfg.trs_to_dfg(log)
     net, im, fm = alpha.alpha(dfg)
     aa = time.time()
