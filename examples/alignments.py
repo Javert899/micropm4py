@@ -1,5 +1,4 @@
 from micropm4py.log import xes_import_traces_file
-from micropm4py.conversion.dfg import traces_to_dfg
 from micropm4py.discovery import alpha
 from micropm4py.petrinet import alignments
 import time
@@ -7,17 +6,17 @@ import os
 
 
 def main():
-    log = xes_import_traces_file.imp_list_traces_from_file(os.path.join("..", "micro_tests", "running-example.xes"))
-    #log = xes_import_traces_file.imp_list_traces_from_file("C:/reviewing.xes")
-    dfg = traces_to_dfg.trs_to_dfg(log)
+    log_file = os.path.join("..", "micro_tests", "reviewing.xes")
+    dfg = xes_import_traces_file.imp_dfg_file(log_file)
     net, im, fm = alpha.alpha(dfg)
-    aa = time.time()
-    i = 0
-    while i < len(log):
-        align = alignments.apply(log[i], net, im, fm, ret_tuple_as_trans_desc=False)
+    it = xes_import_traces_file.get_it_from_file(log_file)
+    nxt = xes_import_traces_file.get_nxt_trace(it)
+    aa = time.ticks_ms()
+    while nxt:
+        align = alignments.apply(nxt, net, im, fm, ret_tuple_as_trans_desc=False)
         print(align)
-        i = i + 1
-    bb = time.time()
+        nxt = xes_import_traces_file.get_nxt_trace(it)
+    bb = time.ticks_ms()
     print(bb - aa)
 
 
