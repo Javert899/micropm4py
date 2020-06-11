@@ -261,6 +261,38 @@ def __decode_marking(m_t):
     return m_d
 
 
+def __add_to_open_set(open_set, ns):
+    """
+    Adds a new state to the open set whether necessary
+
+    Parameters
+    ----------------
+    open_set
+        Open set
+    ns
+        New state
+    """
+    shall_add = True
+    shall_heapify = False
+    i = 0
+    while i < len(open_set):
+        if open_set[i][POSITION_MARKING] == ns[POSITION_MARKING]:
+            if open_set[i][POSITION_INDEX] <= ns[POSITION_INDEX] and open_set[i][POSITION_TOTAL_COST] <= ns[POSITION_TOTAL_COST]:
+                # do not add anything
+                shall_add = False
+                break
+            if open_set[i][POSITION_INDEX] >= ns[POSITION_INDEX] and open_set[i][POSITION_TOTAL_COST] > ns[POSITION_TOTAL_COST]:
+                del open_set[i]
+                shall_heapify = True
+                continue
+        i = i + 1
+    if shall_add:
+        heapq.heappush(open_set, ns)
+    if shall_heapify:
+        heapq.heapify(open_set)
+    return open_set
+
+
 def __dijkstra(model_struct, trace_struct, net, sync_cost=0, ret_tuple_as_trans_desc=False):
     """
     Alignments using Dijkstra
@@ -351,12 +383,12 @@ def __dijkstra(model_struct, trace_struct, net, sync_cost=0, ret_tuple_as_trans_
                             curr[POSITION_TOTAL_COST] + sync_cost, curr[POSITION_INDEX] - 1, IS_SYNC_MOVE, dummy_count,
                             curr,
                             new_m, t)
-                        heapq.heappush(open_set, new_state)
+                        open_set = __add_to_open_set(open_set, new_state)
                 dummy_count = dummy_count + 1
                 new_state = (
                     curr[POSITION_TOTAL_COST] + transf_model_cost_function[t], curr[POSITION_INDEX], IS_MODEL_MOVE,
                     dummy_count, curr, new_m, t)
-                heapq.heappush(open_set, new_state)
+                open_set = __add_to_open_set(open_set, new_state)
         # IMPORTANT: to reduce the complexity, assume that you can schedule a log move
         # only if the previous move has not been a move-on-model.
         # since this setting is equivalent to scheduling all the log moves before and then
@@ -367,7 +399,7 @@ def __dijkstra(model_struct, trace_struct, net, sync_cost=0, ret_tuple_as_trans_
                 new_state = (
                     curr[POSITION_TOTAL_COST] + trace_cost_function[-curr[POSITION_INDEX]], curr[POSITION_INDEX] - 1,
                     IS_LOG_MOVE, dummy_count, curr, curr_m0, None)
-                heapq.heappush(open_set, new_state)
+                open_set = __add_to_open_set(open_set, new_state)
 
 
 def __reconstruct_alignment(curr, model_struct, trace_struct, visited, net, ret_tuple_as_trans_desc=False):
