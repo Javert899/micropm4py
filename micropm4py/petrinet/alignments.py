@@ -329,7 +329,7 @@ def __dijkstra(model_struct, trace_struct, net, sync_cost=0, ret_tuple_as_trans_
     trace_cost_function = trace_struct[TRACE_COST_FUNCTION]
 
     marking_dict = {}
-    closed = ()
+    closed = set()
 
     im = __encode_marking(marking_dict, model_struct[TRANSF_IM])
     fm = __encode_marking(marking_dict, model_struct[TRANSF_FM])
@@ -358,7 +358,7 @@ def __dijkstra(model_struct, trace_struct, net, sync_cost=0, ret_tuple_as_trans_
         curr_m0 = curr[POSITION_MARKING]
         if (curr_m0, curr[POSITION_INDEX]) in closed:
             continue
-        closed = closed + ((curr_m0, curr[POSITION_INDEX]),)
+        closed.add((curr_m0, curr[POSITION_INDEX]))
         curr_m = __decode_marking(curr_m0)
         visited = visited + 1
         if curr_m0 == fm:
@@ -384,11 +384,13 @@ def __dijkstra(model_struct, trace_struct, net, sync_cost=0, ret_tuple_as_trans_
                             curr,
                             new_m, t)
                         open_set = __add_to_open_set(open_set, new_state)
-                dummy_count = dummy_count + 1
-                new_state = (
-                    curr[POSITION_TOTAL_COST] + transf_model_cost_function[t], curr[POSITION_INDEX], IS_MODEL_MOVE,
-                    dummy_count, curr, new_m, t)
-                open_set = __add_to_open_set(open_set, new_state)
+                else:
+                    # avoid scheduling a move-on-model when model and trace are sync.
+                    dummy_count = dummy_count + 1
+                    new_state = (
+                        curr[POSITION_TOTAL_COST] + transf_model_cost_function[t], curr[POSITION_INDEX], IS_MODEL_MOVE,
+                        dummy_count, curr, new_m, t)
+                    open_set = __add_to_open_set(open_set, new_state)
         # IMPORTANT: to reduce the complexity, assume that you can schedule a log move
         # only if the previous move has not been a move-on-model.
         # since this setting is equivalent to scheduling all the log moves before and then
