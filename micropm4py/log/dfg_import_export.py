@@ -22,7 +22,7 @@ def import_dfg(file_path):
         line = line.strip()
         if line:
             line = line.split("x")
-            dfg[4][(line[0].split(">")[0], line[0].split(">")[1])] = int(line[1])
+            dfg[4][(int(line[0].split(">")[0]), int(line[0].split(">")[1]))] = int(line[1])
         line = F.readline()
     F.close()
     dfg[0] = tuple(dfg[0])
