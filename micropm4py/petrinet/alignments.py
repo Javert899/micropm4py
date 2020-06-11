@@ -251,6 +251,30 @@ def __decode_marking(m_t):
     return m_d
 
 
+def __check_closed(closed, ns):
+    """
+    Checks if the state is closed
+
+    Parameters
+    -------------
+    closed
+        Closed set
+    ns
+        New state (marking, index)
+
+    Returns
+    -------------
+    bool
+        Boolean (true if the state is closed)
+    """
+    i = 0
+    while i < len(closed):
+        if closed[i][0] == ns[0] and closed[i][1] <= ns[1]:
+            return True
+        i = i + 1
+    return False
+
+
 def __add_to_open_set(open_set, ns):
     """
     Adds a new state to the open set whether necessary
@@ -323,7 +347,7 @@ def __dijkstra(model_struct, trace_struct, net, im, fm, sync_cost=0, ret_tuple_a
     trace_cost_function = trace_struct[TRACE_COST_FUNCTION]
 
     marking_dict = {}
-    closed = set()
+    closed = tuple([])
 
     im = __encode_marking(marking_dict, im)
     fm = __encode_marking(marking_dict, fm)
@@ -350,9 +374,9 @@ def __dijkstra(model_struct, trace_struct, net, im, fm, sync_cost=0, ret_tuple_a
     while not len(open_set) == 0:
         curr = heapq.heappop(open_set)
         curr_m0 = curr[POSITION_MARKING]
-        if (curr_m0, curr[POSITION_INDEX]) in closed:
+        if __check_closed(closed, (curr_m0, curr[POSITION_INDEX])):
             continue
-        closed.add((curr_m0, curr[POSITION_INDEX]))
+        closed = closed + ((curr_m0, curr[POSITION_INDEX]),)
         curr_m = __decode_marking(curr_m0)
         visited = visited + 1
         if curr_m0 == fm:
@@ -372,7 +396,7 @@ def __dijkstra(model_struct, trace_struct, net, im, fm, sync_cost=0, ret_tuple_a
                 new_m = __encode_marking(marking_dict, __fire_trans(curr_m, trans_pre_dict[t], trans_post_dict[t]))
                 if is_sync:
                     dummy_count = dummy_count + 1
-                    if (new_m, curr[POSITION_INDEX]-1) not in closed:
+                    if not __check_closed(closed, (new_m, curr[POSITION_INDEX]-1)):
                         new_state = (
                             curr[POSITION_TOTAL_COST] + sync_cost, curr[POSITION_INDEX] - 1, IS_SYNC_MOVE, dummy_count,
                             curr,
@@ -381,17 +405,18 @@ def __dijkstra(model_struct, trace_struct, net, im, fm, sync_cost=0, ret_tuple_a
                 else:
                     # avoid scheduling a move-on-model when model and trace are sync.
                     dummy_count = dummy_count + 1
-                    new_state = (
-                        curr[POSITION_TOTAL_COST] + transf_model_cost_function[t], curr[POSITION_INDEX], IS_MODEL_MOVE,
-                        dummy_count, curr, new_m, t)
-                    open_set = __add_to_open_set(open_set, new_state)
+                    if not __check_closed(closed, (new_m, curr[POSITION_INDEX]-1)):
+                        new_state = (
+                            curr[POSITION_TOTAL_COST] + transf_model_cost_function[t], curr[POSITION_INDEX], IS_MODEL_MOVE,
+                            dummy_count, curr, new_m, t)
+                        open_set = __add_to_open_set(open_set, new_state)
         # IMPORTANT: to reduce the complexity, assume that you can schedule a log move
         # only if the previous move has not been a move-on-model.
         # since this setting is equivalent to scheduling all the log moves before and then
         # the model moves
         if -curr[POSITION_INDEX] < len(transf_trace) and curr[POSITION_TYPE_MOVE] != IS_MODEL_MOVE:
             dummy_count = dummy_count + 1
-            if (curr_m0, curr[POSITION_INDEX] - 1) not in closed:
+            if not __check_closed(closed, (curr_m0, curr[POSITION_INDEX] - 1)):
                 new_state = (
                     curr[POSITION_TOTAL_COST] + trace_cost_function[-curr[POSITION_INDEX]], curr[POSITION_INDEX] - 1,
                     IS_LOG_MOVE, dummy_count, curr, curr_m0, None)
