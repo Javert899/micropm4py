@@ -307,7 +307,7 @@ def __dijkstra(model_struct, trace_struct, net, sync_cost=0, max_align_time_trac
     trace_cost_function = trace_struct[TRACE_COST_FUNCTION]
 
     marking_dict = {}
-    closed = set()
+    closed = ()
 
     im = __encode_marking(marking_dict, model_struct[TRANSF_IM])
     fm = __encode_marking(marking_dict, model_struct[TRANSF_FM])
@@ -338,7 +338,7 @@ def __dijkstra(model_struct, trace_struct, net, sync_cost=0, max_align_time_trac
         curr_m0 = curr[POSITION_MARKING]
         if (curr_m0, curr[POSITION_INDEX]) in closed:
             continue
-        closed.add((curr_m0, curr[POSITION_INDEX]))
+        closed = closed + ((curr_m0, curr[POSITION_INDEX]),)
         curr_m = __decode_marking(curr_m0)
         visited = visited + 1
         if curr_m0 == fm:
