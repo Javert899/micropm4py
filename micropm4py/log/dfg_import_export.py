@@ -11,12 +11,12 @@ def import_dfg(file_path):
     no = int(line)
     line = F.readline().strip()
     for i in range(no):
-        dfg[2].append(line.split("x")[0])
+        dfg[2].append(int(line.split("x")[0]))
         line = F.readline().strip()
     no = int(line)
     line = F.readline().strip()
     for i in range(no):
-        dfg[3].append(line.split("x")[0])
+        dfg[3].append(int(line.split("x")[0]))
         line = F.readline().strip()
     while line:
         line = line.strip()
