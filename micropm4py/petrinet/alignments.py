@@ -3,7 +3,6 @@ try:
 except:
     import uheaqp as heapq
 
-
 TRANSF_MODEL_COST_FUNCTION = 0
 TRANS_PRE_DICT = 1
 TRANS_POST_DICT = 2
@@ -49,7 +48,8 @@ def apply(trace, net, im, fm, model_cost_function=None, trace_cost_function=None
         Return tuple as trans desc
     """
     model_struct = __transform_model_to_mem_efficient_structure(net, model_cost_function=model_cost_function)
-    trace_struct = __transform_trace_to_mem_efficient_structure(trace, model_struct, trace_cost_function=trace_cost_function)
+    trace_struct = __transform_trace_to_mem_efficient_structure(trace, model_struct,
+                                                                trace_cost_function=trace_cost_function)
 
     return __dijkstra(model_struct, trace_struct, net, im, fm, ret_tuple_as_trans_desc=ret_tuple_as_trans_desc)
 
@@ -295,11 +295,13 @@ def __add_to_open_set(open_set, ns):
     i = 0
     while i < len(open_set):
         if open_set[i][POSITION_MARKING] == ns[POSITION_MARKING]:
-            if open_set[i][POSITION_INDEX] <= ns[POSITION_INDEX] and open_set[i][POSITION_TOTAL_COST] <= ns[POSITION_TOTAL_COST]:
+            if open_set[i][POSITION_INDEX] <= ns[POSITION_INDEX] and open_set[i][POSITION_TOTAL_COST] <= ns[
+                POSITION_TOTAL_COST]:
                 # do not add anything
                 shall_add = False
                 break
-            if open_set[i][POSITION_INDEX] >= ns[POSITION_INDEX] and open_set[i][POSITION_TOTAL_COST] > ns[POSITION_TOTAL_COST]:
+            if open_set[i][POSITION_INDEX] >= ns[POSITION_INDEX] and open_set[i][POSITION_TOTAL_COST] > ns[
+                POSITION_TOTAL_COST]:
                 del open_set[i]
                 shall_heapify = True
                 continue
@@ -377,14 +379,15 @@ def __dijkstra(model_struct, trace_struct, net, im, fm, sync_cost=0, ret_tuple_a
 
     while not len(open_set) == 0:
         curr = heapq.heappop(open_set)
+        visited = visited + 1
         if __check_closed(closed, (curr[POSITION_MARKING], curr[POSITION_INDEX])):
             continue
-        visited = visited + 1
         if curr[POSITION_MARKING] == fm:
             if -curr[POSITION_INDEX] == len(transf_trace):
                 # returns the alignment only if the final marking has been reached AND
                 # the trace is over
-                return __reconstruct_alignment(curr, trace_struct, visited, net,
+                return __reconstruct_alignment(curr, trace_struct, net, visited, len(open_set), len(closed),
+                                               len(existing_markings),
                                                ret_tuple_as_trans_desc=ret_tuple_as_trans_desc)
             else:
                 closed = closed + ((curr[POSITION_MARKING], curr[POSITION_INDEX]),)
@@ -398,10 +401,11 @@ def __dijkstra(model_struct, trace_struct, net, im, fm, sync_cost=0, ret_tuple_a
                 is_sync = trans_labels_dict[t] == transf_trace[-curr[POSITION_INDEX]] if -curr[POSITION_INDEX] < len(
                     transf_trace) else False
                 # virtually fires the transition to get a new marking
-                existing_markings, new_m = __encode_marking(existing_markings, __fire_trans(curr_m, trans_pre_dict[t], trans_post_dict[t]))
+                existing_markings, new_m = __encode_marking(existing_markings,
+                                                            __fire_trans(curr_m, trans_pre_dict[t], trans_post_dict[t]))
                 if is_sync:
                     dummy_count = dummy_count + 1
-                    if not __check_closed(closed, (new_m, curr[POSITION_INDEX]-1)):
+                    if not __check_closed(closed, (new_m, curr[POSITION_INDEX] - 1)):
                         new_state = (
                             curr[POSITION_TOTAL_COST] + sync_cost, curr[POSITION_INDEX] - 1, IS_SYNC_MOVE, dummy_count,
                             curr,
@@ -410,9 +414,10 @@ def __dijkstra(model_struct, trace_struct, net, im, fm, sync_cost=0, ret_tuple_a
                 else:
                     # avoid scheduling a move-on-model when model and trace are sync.
                     dummy_count = dummy_count + 1
-                    if not __check_closed(closed, (new_m, curr[POSITION_INDEX]-1)):
+                    if not __check_closed(closed, (new_m, curr[POSITION_INDEX] - 1)):
                         new_state = (
-                            curr[POSITION_TOTAL_COST] + transf_model_cost_function[t], curr[POSITION_INDEX], IS_MODEL_MOVE,
+                            curr[POSITION_TOTAL_COST] + transf_model_cost_function[t], curr[POSITION_INDEX],
+                            IS_MODEL_MOVE,
                             dummy_count, curr, new_m, t)
                         open_set = __add_to_open_set(open_set, new_state)
         # IMPORTANT: to reduce the complexity, assume that you can schedule a log move
@@ -428,7 +433,8 @@ def __dijkstra(model_struct, trace_struct, net, im, fm, sync_cost=0, ret_tuple_a
                 open_set = __add_to_open_set(open_set, new_state)
 
 
-def __reconstruct_alignment(curr, trace_struct, visited, net, ret_tuple_as_trans_desc=False):
+def __reconstruct_alignment(curr, trace_struct, net, visited, queued, closed_set_length, num_visited_markings,
+                            ret_tuple_as_trans_desc=False):
     """
     Reconstruct the alignment from the final state (that reached the final marking)
 
@@ -438,10 +444,16 @@ def __reconstruct_alignment(curr, trace_struct, visited, net, ret_tuple_as_trans
         Current state (final state)
     trace_struct
         Efficient data structure for the trace
-    visited
-        Number of visited states
     net
         Petri net
+    visited
+        Number of visited states
+    queued
+        Number of queued states (at the end of execution; shall be summed by visited)
+    closed_set_length
+        Length of the closed set
+    num_visited_markings
+        Number of visited markings
     ret_tuple_as_trans_desc
         Says if the alignments shall be constructed including also
         the name of the transition, or only the label (default=False includes only the label)
@@ -460,7 +472,8 @@ def __reconstruct_alignment(curr, trace_struct, visited, net, ret_tuple_as_trans
 
     alignment = []
     cost = curr[POSITION_TOTAL_COST]
-    queued = curr[POSITION_STATES_COUNT]
+
+    queued = queued + visited
 
     while curr[POSITION_PARENT_STATE] is not None:
         m_name, m_label, t_name, t_label = ">>", ">>", ">>", ">>"
@@ -477,4 +490,5 @@ def __reconstruct_alignment(curr, trace_struct, visited, net, ret_tuple_as_trans
             alignment = [(t_label, m_label)] + alignment
         curr = curr[POSITION_PARENT_STATE]
 
-    return {"alignment": alignment, "cost": cost, "queued_states": queued, "visited_states": visited}
+    return {"alignment": alignment, "cost": cost, "queued_states": queued, "visited_states": visited,
+            "closed_set_length": closed_set_length, "num_visited_markings": num_visited_markings}
