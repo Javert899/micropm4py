@@ -377,21 +377,22 @@ def __dijkstra(model_struct, trace_struct, net, im, fm, sync_cost=0, ret_tuple_a
 
     while not len(open_set) == 0:
         curr = heapq.heappop(open_set)
-        curr_m0 = curr[POSITION_MARKING]
-        if __check_closed(closed, (curr_m0, curr[POSITION_INDEX])):
+        if __check_closed(closed, (curr[POSITION_MARKING], curr[POSITION_INDEX])):
             continue
-        closed = closed + ((curr_m0, curr[POSITION_INDEX]),)
-        curr_m = __decode_marking(curr_m0)
         visited = visited + 1
-        if curr_m0 == fm:
+        if curr[POSITION_MARKING] == fm:
             if -curr[POSITION_INDEX] == len(transf_trace):
                 # returns the alignment only if the final marking has been reached AND
                 # the trace is over
                 return __reconstruct_alignment(curr, trace_struct, visited, net,
                                                ret_tuple_as_trans_desc=ret_tuple_as_trans_desc)
+            else:
+                closed = closed + ((curr[POSITION_MARKING], curr[POSITION_INDEX]),)
         else:
+            closed = closed + ((curr[POSITION_MARKING], curr[POSITION_INDEX]),)
+            curr_m = __decode_marking(curr[POSITION_MARKING])
             # retrieves the transitions that are enabled in the current marking
-            en_t = [t for t in trans_pre_dict if __dict_leq(trans_pre_dict[t], curr_m)]
+            en_t = tuple([t for t in trans_pre_dict if __dict_leq(trans_pre_dict[t], curr_m)])
             for t in en_t:
                 # checks if a given transition can be executed in sync with the trace
                 is_sync = trans_labels_dict[t] == transf_trace[-curr[POSITION_INDEX]] if -curr[POSITION_INDEX] < len(
@@ -420,10 +421,10 @@ def __dijkstra(model_struct, trace_struct, net, im, fm, sync_cost=0, ret_tuple_a
         # the model moves
         if -curr[POSITION_INDEX] < len(transf_trace) and curr[POSITION_TYPE_MOVE] != IS_MODEL_MOVE:
             dummy_count = dummy_count + 1
-            if not __check_closed(closed, (curr_m0, curr[POSITION_INDEX] - 1)):
+            if not __check_closed(closed, (curr[POSITION_MARKING], curr[POSITION_INDEX] - 1)):
                 new_state = (
                     curr[POSITION_TOTAL_COST] + trace_cost_function[-curr[POSITION_INDEX]], curr[POSITION_INDEX] - 1,
-                    IS_LOG_MOVE, dummy_count, curr, curr_m0, None)
+                    IS_LOG_MOVE, dummy_count, curr, curr[POSITION_MARKING], None)
                 open_set = __add_to_open_set(open_set, new_state)
 
 
