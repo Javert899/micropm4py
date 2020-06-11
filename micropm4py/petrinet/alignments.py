@@ -3,15 +3,13 @@ try:
 except:
     import uheaqp as heapq
 
-PLACES_DICT = "places_dict"
-INV_TRANS_DICT = "inv_trans_dict"
-LABELS_DICT = "labels_dict"
-TRANS_LABELS_DICT = "trans_labels_dict"
-TRANS_PRE_DICT = "trans_pre_dict"
-TRANS_POST_DICT = "trans_post_dict"
-TRANSF_IM = "transf_im"
-TRANSF_FM = "transf_fm"
-TRANSF_MODEL_COST_FUNCTION = "transf_model_cost_function"
+
+TRANSF_MODEL_COST_FUNCTION = 0
+TRANS_PRE_DICT = 1
+TRANS_POST_DICT = 2
+LABELS_DICT = 3
+TRANS_LABELS_DICT = 4
+
 TRANSF_TRACE = "transf_trace"
 TRACE_COST_FUNCTION = "trace_cost_function"
 INV_TRACE_LABELS_DICT = "inv_trace_labels_dict"
@@ -50,13 +48,13 @@ def apply(trace, net, im, fm, model_cost_function=None, trace_cost_function=None
     ret_tuple_as_trans_desc
         Return tuple as trans desc
     """
-    model_struct = __transform_model_to_mem_efficient_structure(net, im, fm, model_cost_function=model_cost_function)
+    model_struct = __transform_model_to_mem_efficient_structure(net, model_cost_function=model_cost_function)
     trace_struct = __transform_trace_to_mem_efficient_structure(trace, model_struct, trace_cost_function=trace_cost_function)
 
-    return __dijkstra(model_struct, trace_struct, net, ret_tuple_as_trans_desc=ret_tuple_as_trans_desc)
+    return __dijkstra(model_struct, trace_struct, net, im, fm, ret_tuple_as_trans_desc=ret_tuple_as_trans_desc)
 
 
-def __transform_model_to_mem_efficient_structure(net, im, fm, model_cost_function=None):
+def __transform_model_to_mem_efficient_structure(net, model_cost_function=None):
     """
     Transform the Petri net model to a memory efficient structure
 
@@ -64,10 +62,6 @@ def __transform_model_to_mem_efficient_structure(net, im, fm, model_cost_functio
     --------------
     net
         Petri net
-    im
-        Initial marking
-    fm
-        Final marking
     model_cost_function
         Model cost function
 
@@ -75,22 +69,19 @@ def __transform_model_to_mem_efficient_structure(net, im, fm, model_cost_functio
     --------------
     model_struct
         Model data structure, including:
-            PLACES_DICT: associates each place to a number
-            INV_TRANS_DICT: associates a number to each transition
-            LABELS_DICT: labels dictionary (a label to a number)
-            TRANS_LABELS_DICT: associates each transition to the number corresponding to its label
+            TRANSF_MODEL_COST_FUNCTION: transformed model cost function
             TRANS_PRE_DICT: preset of a transition, expressed as in this data structure
             TRANS_POST_DICT: postset of a transition, expressed as in this data structure
-            TRANSF_IM: transformed initial marking
-            TRANSF_FM: transformed final marking
-            TRANSF_MODEL_COST_FUNCTION: transformed model cost function
+            LABELS_DICT: labels dictionary (a label to a number)
+            TRANS_LABELS_DICT: associates each transition to the number corresponding to its label
     """
     if model_cost_function is None:
-        model_cost_function = {}
+        model_cost_function = []
         i = 0
         while i < len(net[1]):
-            model_cost_function[i] = 10000
+            model_cost_function.append(10000)
             i = i + 1
+        model_cost_function = tuple(model_cost_function)
 
     trans_pre_dict = {}
     trans_post_dict = {}
@@ -103,15 +94,14 @@ def __transform_model_to_mem_efficient_structure(net, im, fm, model_cost_functio
         i = i + 1
     labels = sorted(list(labels))
     labels_dict = {labels[i]: i for i in range(len(labels))}
-    trans_labels_dict = {}
+    trans_labels_dict = []
     i = 0
     while i < len(net[1]):
-        trans_labels_dict[i] = labels_dict[net[1][i][0]]
+        trans_labels_dict.append(labels_dict[net[1][i][0]])
         i = i + 1
+    trans_labels_dict = tuple(trans_labels_dict)
 
-    return {TRANSF_MODEL_COST_FUNCTION: model_cost_function, TRANS_PRE_DICT: trans_pre_dict,
-            TRANS_POST_DICT: trans_post_dict, TRANSF_IM: im,
-            TRANSF_FM: fm, LABELS_DICT: labels_dict, TRANS_LABELS_DICT: trans_labels_dict}
+    return (model_cost_function, trans_pre_dict, trans_post_dict, labels_dict, trans_labels_dict)
 
 
 def __transform_trace_to_mem_efficient_structure(trace, model_struct, trace_cost_function=None):
@@ -293,7 +283,7 @@ def __add_to_open_set(open_set, ns):
     return open_set
 
 
-def __dijkstra(model_struct, trace_struct, net, sync_cost=0, ret_tuple_as_trans_desc=False):
+def __dijkstra(model_struct, trace_struct, net, im, fm, sync_cost=0, ret_tuple_as_trans_desc=False):
     """
     Alignments using Dijkstra
 
@@ -305,6 +295,10 @@ def __dijkstra(model_struct, trace_struct, net, sync_cost=0, ret_tuple_as_trans_
         Efficient trace structure
     net
         Petri net
+    im
+        Initial marking
+    fm
+        Final marking
     sync_cost
         Cost of a sync move (limitation: all sync moves shall have the same cost in this setting)
     ret_tuple_as_trans_desc
@@ -331,8 +325,8 @@ def __dijkstra(model_struct, trace_struct, net, sync_cost=0, ret_tuple_as_trans_
     marking_dict = {}
     closed = set()
 
-    im = __encode_marking(marking_dict, model_struct[TRANSF_IM])
-    fm = __encode_marking(marking_dict, model_struct[TRANSF_FM])
+    im = __encode_marking(marking_dict, im)
+    fm = __encode_marking(marking_dict, fm)
 
     # each state is characterized by:
     # position 0 (POSITION_TOTAL_COST): total cost of the state
@@ -365,7 +359,7 @@ def __dijkstra(model_struct, trace_struct, net, sync_cost=0, ret_tuple_as_trans_
             if -curr[POSITION_INDEX] == len(transf_trace):
                 # returns the alignment only if the final marking has been reached AND
                 # the trace is over
-                return __reconstruct_alignment(curr, model_struct, trace_struct, visited, net,
+                return __reconstruct_alignment(curr, trace_struct, visited, net,
                                                ret_tuple_as_trans_desc=ret_tuple_as_trans_desc)
         else:
             # retrieves the transitions that are enabled in the current marking
@@ -404,7 +398,7 @@ def __dijkstra(model_struct, trace_struct, net, sync_cost=0, ret_tuple_as_trans_
                 open_set = __add_to_open_set(open_set, new_state)
 
 
-def __reconstruct_alignment(curr, model_struct, trace_struct, visited, net, ret_tuple_as_trans_desc=False):
+def __reconstruct_alignment(curr, trace_struct, visited, net, ret_tuple_as_trans_desc=False):
     """
     Reconstruct the alignment from the final state (that reached the final marking)
 
@@ -412,8 +406,6 @@ def __reconstruct_alignment(curr, model_struct, trace_struct, visited, net, ret_
     ----------------
     curr
         Current state (final state)
-    model_struct
-        Efficient data structure for the model
     trace_struct
         Efficient data structure for the trace
     visited
