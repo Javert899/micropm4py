@@ -200,14 +200,14 @@ def __fire_trans(m, preset, postset):
     return ret
 
 
-def __encode_marking(marking_dict, m_d):
+def __encode_marking(existing_markings, m_d):
     """
     Encode a marking using the dictionary
 
     Parameters
     --------------
-    marking_dict
-        Marking dictionary
+    existing_markings
+        Existing markings
     m_d
         Current marking (dict)
 
@@ -222,9 +222,13 @@ def __encode_marking(marking_dict, m_d):
         for i in range(m_d[el]):
             m_t.append(el)
     m_t = tuple(m_t)
-    if m_t not in marking_dict:
-        marking_dict[m_t] = m_t
-    return marking_dict[m_t]
+    i = 0
+    while i < len(existing_markings):
+        if existing_markings[i] == m_t:
+            return existing_markings, existing_markings[i]
+        i = i + 1
+    existing_markings = existing_markings + (m_t,)
+    return existing_markings, m_t
 
 
 def __decode_marking(m_t):
@@ -346,11 +350,11 @@ def __dijkstra(model_struct, trace_struct, net, im, fm, sync_cost=0, ret_tuple_a
     transf_trace = trace_struct[TRANSF_TRACE]
     trace_cost_function = trace_struct[TRACE_COST_FUNCTION]
 
-    marking_dict = {}
+    existing_markings = tuple([])
     closed = tuple([])
 
-    im = __encode_marking(marking_dict, im)
-    fm = __encode_marking(marking_dict, fm)
+    existing_markings, im = __encode_marking(existing_markings, im)
+    existing_markings, fm = __encode_marking(existing_markings, fm)
 
     # each state is characterized by:
     # position 0 (POSITION_TOTAL_COST): total cost of the state
@@ -393,7 +397,7 @@ def __dijkstra(model_struct, trace_struct, net, im, fm, sync_cost=0, ret_tuple_a
                 is_sync = trans_labels_dict[t] == transf_trace[-curr[POSITION_INDEX]] if -curr[POSITION_INDEX] < len(
                     transf_trace) else False
                 # virtually fires the transition to get a new marking
-                new_m = __encode_marking(marking_dict, __fire_trans(curr_m, trans_pre_dict[t], trans_post_dict[t]))
+                existing_markings, new_m = __encode_marking(existing_markings, __fire_trans(curr_m, trans_pre_dict[t], trans_post_dict[t]))
                 if is_sync:
                     dummy_count = dummy_count + 1
                     if not __check_closed(closed, (new_m, curr[POSITION_INDEX]-1)):
