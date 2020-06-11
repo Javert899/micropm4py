@@ -10,9 +10,9 @@ TRANS_POST_DICT = 2
 LABELS_DICT = 3
 TRANS_LABELS_DICT = 4
 
-TRANSF_TRACE = "transf_trace"
-TRACE_COST_FUNCTION = "trace_cost_function"
-INV_TRACE_LABELS_DICT = "inv_trace_labels_dict"
+TRANSF_TRACE = 0
+TRACE_COST_FUNCTION = 1
+INV_TRACE_LABELS_DICT = 2
 
 IS_SYNC_MOVE = 0
 IS_LOG_MOVE = 1
@@ -138,8 +138,8 @@ def __transform_trace_to_mem_efficient_structure(trace, model_struct, trace_cost
     transf_trace = [labels_dict[x] for x in trace[1]]
 
     inv_trace_labels_dict = {y: x for x, y in labels_dict.items()}
-    return {TRANSF_TRACE: transf_trace, TRACE_COST_FUNCTION: trace_cost_function,
-            INV_TRACE_LABELS_DICT: inv_trace_labels_dict}
+
+    return (transf_trace, trace_cost_function, inv_trace_labels_dict)
 
 
 def __dict_leq(d1, d2):
