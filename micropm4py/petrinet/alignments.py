@@ -3,11 +3,6 @@ try:
 except:
     import uheaqp as heapq
 
-try:
-    import time
-except:
-    import utime as time
-
 PLACES_DICT = "places_dict"
 INV_TRANS_DICT = "inv_trans_dict"
 LABELS_DICT = "labels_dict"
@@ -266,8 +261,7 @@ def __decode_marking(m_t):
     return m_d
 
 
-def __dijkstra(model_struct, trace_struct, net, sync_cost=0, max_align_time_trace=10000000,
-               ret_tuple_as_trans_desc=False):
+def __dijkstra(model_struct, trace_struct, net, sync_cost=0, ret_tuple_as_trans_desc=False):
     """
     Alignments using Dijkstra
 
@@ -281,8 +275,6 @@ def __dijkstra(model_struct, trace_struct, net, sync_cost=0, max_align_time_trac
         Petri net
     sync_cost
         Cost of a sync move (limitation: all sync moves shall have the same cost in this setting)
-    max_align_time_trace
-        Maximum alignment time for a trace (in seconds)
     ret_tuple_as_trans_desc
         Says if the alignments shall be constructed including also
         the name of the transition, or only the label (default=False includes only the label)
@@ -296,8 +288,6 @@ def __dijkstra(model_struct, trace_struct, net, sync_cost=0, max_align_time_trac
             visited: the number of states that have been visited
             cost: the cost of the alignment
     """
-    start_time = time.time()
-
     trans_pre_dict = model_struct[TRANS_PRE_DICT]
     trans_post_dict = model_struct[TRANS_POST_DICT]
     trans_labels_dict = model_struct[TRANS_LABELS_DICT]
@@ -332,8 +322,6 @@ def __dijkstra(model_struct, trace_struct, net, sync_cost=0, max_align_time_trac
     visited = 0
 
     while not len(open_set) == 0:
-        if (time.time() - start_time) > max_align_time_trace:
-            return None
         curr = heapq.heappop(open_set)
         curr_m0 = curr[POSITION_MARKING]
         if (curr_m0, curr[POSITION_INDEX]) in closed:
