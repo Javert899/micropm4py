@@ -3,6 +3,8 @@ try:
 except:
     import uheaqp as heapq
 
+import gc
+
 TRANSF_MODEL_COST_FUNCTION = 0
 TRANS_PRE_DICT = 1
 TRANS_POST_DICT = 2
@@ -313,7 +315,7 @@ def __add_to_open_set(open_set, ns):
     return open_set
 
 
-def __dijkstra(model_struct, trace_struct, net, im, fm, sync_cost=0, ret_tuple_as_trans_desc=False):
+def __dijkstra(model_struct, trace_struct, net, im, fm, sync_cost=0, ret_tuple_as_trans_desc=False, enable_gc=True):
     """
     Alignments using Dijkstra
 
@@ -334,6 +336,8 @@ def __dijkstra(model_struct, trace_struct, net, im, fm, sync_cost=0, ret_tuple_a
     ret_tuple_as_trans_desc
         Says if the alignments shall be constructed including also
         the name of the transition, or only the label (default=False includes only the label)
+    enable_gc
+        Boolean value (enabling or not the garbage collection)
 
     Returns
     --------------
@@ -431,6 +435,8 @@ def __dijkstra(model_struct, trace_struct, net, im, fm, sync_cost=0, ret_tuple_a
                     curr[POSITION_TOTAL_COST] + trace_cost_function[-curr[POSITION_INDEX]], curr[POSITION_INDEX] - 1,
                     IS_LOG_MOVE, dummy_count, curr, curr[POSITION_MARKING], None)
                 open_set = __add_to_open_set(open_set, new_state)
+        if enable_gc:
+            gc.collect()
 
 
 def __reconstruct_alignment(curr, trace_struct, net, visited, queued, closed_set_length, num_visited_markings,
