@@ -15,7 +15,7 @@ def main():
     aa = time.ticks_ms()
     while nxt:
         try:
-            align = alignments.apply(nxt, net, im, fm, ret_tuple_as_trans_desc=False)
+            align = alignments.apply(nxt, net, im, fm, ret_tuple_as_trans_desc=False, enable_gc=True)
             print(align)
         except:
             print("MemoryError")

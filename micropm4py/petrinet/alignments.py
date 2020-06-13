@@ -28,7 +28,8 @@ POSITION_MARKING = 5
 POSITION_EN_T = 6
 
 
-def apply(trace, net, im, fm, model_cost_function=None, trace_cost_function=None, ret_tuple_as_trans_desc=False):
+def apply(trace, net, im, fm, model_cost_function=None, trace_cost_function=None, ret_tuple_as_trans_desc=False,
+          enable_gc=True):
     """
     Apply alignments using the Dijkstra approach
 
@@ -48,12 +49,15 @@ def apply(trace, net, im, fm, model_cost_function=None, trace_cost_function=None
         Trace cost function
     ret_tuple_as_trans_desc
         Return tuple as trans desc
+    enable_gc
+        Enable garbage collector
     """
     model_struct = __transform_model_to_mem_efficient_structure(net, model_cost_function=model_cost_function)
     trace_struct = __transform_trace_to_mem_efficient_structure(trace, model_struct,
                                                                 trace_cost_function=trace_cost_function)
 
-    return __dijkstra(model_struct, trace_struct, net, im, fm, ret_tuple_as_trans_desc=ret_tuple_as_trans_desc)
+    return __dijkstra(model_struct, trace_struct, net, im, fm, ret_tuple_as_trans_desc=ret_tuple_as_trans_desc,
+                      enable_gc=enable_gc)
 
 
 def __transform_model_to_mem_efficient_structure(net, model_cost_function=None):
@@ -273,12 +277,23 @@ def __check_closed(closed, ns):
     bool
         Boolean (true if the state is closed)
     """
-    i = 0
-    while i < len(closed):
-        if closed[i][0] == ns[0] and closed[i][1] <= ns[1]:
-            return True
-        i = i + 1
+    if ns[0] in closed and closed[ns[0]] <= ns[1]:
+        return True
     return False
+
+
+def __add_closed(closed, ns):
+    """
+    Adds a closed state
+
+    Parameters
+    --------------
+    closed
+        Closed set
+    ns
+        New state (marking, index)
+    """
+    closed[ns[0]] = ns[1]
 
 
 def __add_to_open_set(open_set, ns):
@@ -357,7 +372,7 @@ def __dijkstra(model_struct, trace_struct, net, im, fm, sync_cost=0, ret_tuple_a
     trace_cost_function = trace_struct[TRACE_COST_FUNCTION]
 
     existing_markings = tuple([])
-    closed = tuple([])
+    closed = {}
 
     existing_markings, im = __encode_marking(existing_markings, im)
     existing_markings, fm = __encode_marking(existing_markings, fm)
@@ -394,9 +409,9 @@ def __dijkstra(model_struct, trace_struct, net, im, fm, sync_cost=0, ret_tuple_a
                                                len(existing_markings),
                                                ret_tuple_as_trans_desc=ret_tuple_as_trans_desc)
             else:
-                closed = closed + ((curr[POSITION_MARKING], curr[POSITION_INDEX]),)
+                __add_closed(closed, (curr[POSITION_MARKING], curr[POSITION_INDEX]))
         else:
-            closed = closed + ((curr[POSITION_MARKING], curr[POSITION_INDEX]),)
+            __add_closed(closed, (curr[POSITION_MARKING], curr[POSITION_INDEX]))
             curr_m = __decode_marking(curr[POSITION_MARKING])
             # retrieves the transitions that are enabled in the current marking
             en_t = tuple([t for t in trans_pre_dict if __dict_leq(trans_pre_dict[t], curr_m)])
