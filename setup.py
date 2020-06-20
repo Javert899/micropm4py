@@ -12,11 +12,11 @@ def read_file(filename):
 
 setup(
     name=micropm4py.__name__,
-    version=micropm4py.__version__,
-    description=micropm4py.__doc__.strip(),
+    version="0.2.1",
+    description="MicroPM4Py - Process Mining for Micro-Controllers".strip(),
     long_description=read_file('README.md'),
-    author=micropm4py.__author__,
-    author_email=micropm4py.__author_email__,
+    author="Alessandro Berti",
+    author_email="alessandro.berti89@gmail.com",
     py_modules=[micropm4py.__name__],
     include_package_data=True,
     packages=['micropm4py', 'micropm4py.log', 'micropm4py.util', 'micropm4py.petrinet', 'micropm4py.random', 'micropm4py.discovery',

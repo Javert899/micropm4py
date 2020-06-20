@@ -10,7 +10,7 @@ def to(net0, im0, fm0):
     dt = {}
     i = 0
     while i < len(net0[0]):
-        p = PetriNet.Place(net0[0][i])
+        p = PetriNet.Place(str(net0[0][i]))
         net.places.add(p)
         dp[i] = p
         i = i + 1

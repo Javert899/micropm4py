@@ -15,6 +15,7 @@ def get_nxt_trace(it):
         tr, p, on = xes_import_traces.r(tr, p, it[0], line, {})
         it[0] = on
         if tr is not None:
+            tr = tuple(tr)
             return tr
         line = it[3].readline()
     it[3].close()

@@ -89,6 +89,7 @@ def get_nxt_trace(it):
         tr, p, on = xes_import_traces.r(tr, p, it[0], line, it[1])
         it[0] = on
         if tr is not None:
+            tr = tuple(tr)
             return tr
         line = get_line(it[3])
     it[3].close()
@@ -104,6 +105,7 @@ def get_nxt_unq_trace(it):
         it[0] = on
         if tr is not None and not tr[1] in it[2]:
             it[2].add(tr[1])
+            tr = tuple(tr)
             return tr
         line = get_line(it[3])
     it[3].close()
