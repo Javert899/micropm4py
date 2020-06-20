@@ -1,4 +1,6 @@
 import micropm4py
+from micropm4py.log import xes_import_traces_file_standard
+from micropm4py.conversion.dfg import dfg_mining
 from pympler.asizeof import asizeof
 import os
 
