@@ -30,28 +30,6 @@ POSITION_EN_T = 6
 
 def apply(trace, net, im, fm, model_cost_function=None, trace_cost_function=None, ret_tuple_as_trans_desc=False,
           enable_gc=True):
-    """
-    Apply alignments using the Dijkstra approach
-
-    Parameters
-    ---------------
-    trace
-        Trace
-    net
-        Petri net
-    im
-        Initial marking
-    fm
-        Final marking
-    model_cost_function
-        Model cost function
-    trace_cost_function
-        Trace cost function
-    ret_tuple_as_trans_desc
-        Return tuple as trans desc
-    enable_gc
-        Enable garbage collector
-    """
     model_struct = __transform_model_to_mem_efficient_structure(net, model_cost_function=model_cost_function)
     trace_struct = __transform_trace_to_mem_efficient_structure(trace, model_struct,
                                                                 trace_cost_function=trace_cost_function)
@@ -61,26 +39,6 @@ def apply(trace, net, im, fm, model_cost_function=None, trace_cost_function=None
 
 
 def __transform_model_to_mem_efficient_structure(net, model_cost_function=None):
-    """
-    Transform the Petri net model to a memory efficient structure
-
-    Parameters
-    --------------
-    net
-        Petri net
-    model_cost_function
-        Model cost function
-
-    Returns
-    --------------
-    model_struct
-        Model data structure, including:
-            TRANSF_MODEL_COST_FUNCTION: transformed model cost function
-            TRANS_PRE_DICT: preset of a transition, expressed as in this data structure
-            TRANS_POST_DICT: postset of a transition, expressed as in this data structure
-            LABELS_DICT: labels dictionary (a label to a number)
-            TRANS_LABELS_DICT: associates each transition to the number corresponding to its label
-    """
     if model_cost_function is None:
         model_cost_function = []
         i = 0
@@ -111,24 +69,6 @@ def __transform_model_to_mem_efficient_structure(net, model_cost_function=None):
 
 
 def __transform_trace_to_mem_efficient_structure(trace, model_struct, trace_cost_function=None):
-    """
-    Transforms a trace to a memory efficient structure
-
-    Parameters
-    ---------------
-    trace
-        Trace
-    model_struct
-        Efficient data structure for the model (calculated above)
-
-    Returns
-    ---------------
-    trace_struct
-        An efficient structure describing the trace, including:
-            TRANSF_TRACE: the transformed trace
-            TRACE_COST_FUNCTION: the cost function associated to the trace
-            INV_TRACE_LABELS_DICT: dictionary that associates a number to an activity
-    """
     if trace_cost_function is None:
         trace_cost_function = {i: 10000 for i in range(len(trace[1]))}
 
@@ -149,21 +89,6 @@ def __transform_trace_to_mem_efficient_structure(trace, model_struct, trace_cost
 
 
 def __dict_leq(d1, d2):
-    """
-    Checks if the first dictionary is <= the second
-
-    Parameters
-    --------------
-    d1
-        First dictionary
-    d2
-        Second dictionary
-
-    Returns
-    --------------
-    boolean
-        Boolean
-    """
     for k in d1:
         if k not in d2:
             return False
@@ -173,23 +98,6 @@ def __dict_leq(d1, d2):
 
 
 def __fire_trans(m, preset, postset):
-    """
-    Fires a transition and returns a new marking
-
-    Parameters
-    ---------------
-    m
-        Marking
-    preset
-        Preset
-    postset
-        Postset
-
-    Returns
-    ---------------
-    new_m
-        New marking
-    """
     ret = {}
     for k in m:
         if k in preset:
@@ -207,21 +115,6 @@ def __fire_trans(m, preset, postset):
 
 
 def __encode_marking(existing_markings, m_d):
-    """
-    Encode a marking using the dictionary
-
-    Parameters
-    --------------
-    existing_markings
-        Existing markings
-    m_d
-        Current marking (dict)
-
-    Returns
-    --------------
-    m_t
-        Marking in tuple
-    """
     keys = sorted(list(m_d.keys()))
     m_t = []
     for el in keys:
@@ -238,19 +131,6 @@ def __encode_marking(existing_markings, m_d):
 
 
 def __decode_marking(m_t):
-    """
-    Decode a marking using a dictionary
-
-    Parameters
-    ---------------
-    m_t
-        Marking as tuple
-
-    Returns
-    ---------------
-    m_d
-        Marking as dictionary
-    """
     m_d = {}
     for el in m_t:
         if el not in m_d:
@@ -262,51 +142,16 @@ def __decode_marking(m_t):
 
 
 def __check_closed(closed, ns):
-    """
-    Checks if the state is closed
-
-    Parameters
-    -------------
-    closed
-        Closed set
-    ns
-        New state (marking, index)
-
-    Returns
-    -------------
-    bool
-        Boolean (true if the state is closed)
-    """
     if ns[0] in closed and closed[ns[0]] <= ns[1]:
         return True
     return False
 
 
 def __add_closed(closed, ns):
-    """
-    Adds a closed state
-
-    Parameters
-    --------------
-    closed
-        Closed set
-    ns
-        New state (marking, index)
-    """
     closed[ns[0]] = ns[1]
 
 
 def __add_to_open_set(open_set, ns):
-    """
-    Adds a new state to the open set whether necessary
-
-    Parameters
-    ----------------
-    open_set
-        Open set
-    ns
-        New state
-    """
     shall_add = True
     shall_heapify = False
     i = 0
@@ -331,38 +176,6 @@ def __add_to_open_set(open_set, ns):
 
 
 def __dijkstra(model_struct, trace_struct, net, im, fm, sync_cost=0, ret_tuple_as_trans_desc=False, enable_gc=True):
-    """
-    Alignments using Dijkstra
-
-    Parameters
-    ---------------
-    model_struct
-        Efficient model structure
-    trace_struct
-        Efficient trace structure
-    net
-        Petri net
-    im
-        Initial marking
-    fm
-        Final marking
-    sync_cost
-        Cost of a sync move (limitation: all sync moves shall have the same cost in this setting)
-    ret_tuple_as_trans_desc
-        Says if the alignments shall be constructed including also
-        the name of the transition, or only the label (default=False includes only the label)
-    enable_gc
-        Boolean value (enabling or not the garbage collection)
-
-    Returns
-    --------------
-    alignment
-        Alignment of the trace, including:
-            alignment: the sequence of moves
-            queued: the number of states that have been queued
-            visited: the number of states that have been visited
-            cost: the cost of the alignment
-    """
     trans_pre_dict = model_struct[TRANS_PRE_DICT]
     trans_post_dict = model_struct[TRANS_POST_DICT]
     trans_labels_dict = model_struct[TRANS_LABELS_DICT]
@@ -377,18 +190,6 @@ def __dijkstra(model_struct, trace_struct, net, im, fm, sync_cost=0, ret_tuple_a
     existing_markings, im = __encode_marking(existing_markings, im)
     existing_markings, fm = __encode_marking(existing_markings, fm)
 
-    # each state is characterized by:
-    # position 0 (POSITION_TOTAL_COST): total cost of the state
-    # position 1 (POSITION_INDEX): the opposite of the position of the trace (the higher is, the lower should
-    # be the state in the queue
-    # position 2 (POSITION_TYPE_MOVE): the type of the move:
-    # ----------- 0 (IS_SYNC_MOVE): sync moves
-    # ----------- 1 (IS_LOG_MOVE): log moves
-    # ----------- 2 (IS_MODEL_MOVE): model moves
-    # position 3 (POSITION_STATES_COUNT): the count of states visited
-    # position 4 (POSITION_PARENT_STATE): if valued, the parent state of the current state
-    # position 5 (POSITION_MARKING): the marking associated to the state
-    # position 6 (POSITION_EN_T): if valued, the transition that was enabled to reach the state
     initial_state = (0, 0, 0, 0, None, im, None)
     open_set = [initial_state]
     heapq.heapify(open_set)
@@ -456,38 +257,6 @@ def __dijkstra(model_struct, trace_struct, net, im, fm, sync_cost=0, ret_tuple_a
 
 def __reconstruct_alignment(curr, trace_struct, net, visited, queued, closed_set_length, num_visited_markings,
                             ret_tuple_as_trans_desc=False):
-    """
-    Reconstruct the alignment from the final state (that reached the final marking)
-
-    Parameters
-    ----------------
-    curr
-        Current state (final state)
-    trace_struct
-        Efficient data structure for the trace
-    net
-        Petri net
-    visited
-        Number of visited states
-    queued
-        Number of queued states (at the end of execution; shall be summed by visited)
-    closed_set_length
-        Length of the closed set
-    num_visited_markings
-        Number of visited markings
-    ret_tuple_as_trans_desc
-        Says if the alignments shall be constructed including also
-        the name of the transition, or only the label (default=False includes only the label)
-
-    Returns
-    --------------
-    alignment
-        Alignment of the trace, including:
-            alignment: the sequence of moves
-            queued: the number of states that have been queued
-            visited: the number of states that have been visited
-            cost: the cost of the alignment
-    """
     transf_trace = trace_struct[TRANSF_TRACE]
     inv_labels_dict = trace_struct[INV_TRACE_LABELS_DICT]
 
