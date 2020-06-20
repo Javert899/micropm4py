@@ -1,4 +1,4 @@
-__version__ = '0.1.8'
+__version__ = '0.2.0'
 __doc__ = "MicroPM4Py - Process Mining for Micro-Controllers"
 __author__ = 'Alessandro Berti'
 __author_email__ = 'alessandro.berti89@gmail.com'
