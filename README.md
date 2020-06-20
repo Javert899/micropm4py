@@ -34,12 +34,14 @@ Log importing/exporting
 * CSV exporter (only case ID and activity, support for the specification of th separator
 * Importing of DFGs from XES (without keeping the log in-memory)
 * Importing of DFGs from CSV (without keeping the log in-memory)
+* Importing/Exporting of .dfg files
 * Support for the insertion of artificial start-end activities
 * Conversion of log to DFG
 * Petri Nets
 
 Execution semantics
 * Token-based replay (without support for invisible transitions)
+* Alignments (without support for invisible transitions)
 * Importing of PNML files
 * Exporting of PNML files
 * Conversions

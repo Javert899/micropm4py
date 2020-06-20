@@ -268,7 +268,39 @@
         m = copy.copy(im)<br />
         res = petrinet_exec.ex_trace(net, m, fm, ['register request', 'examine casually', 'check ticket', 'decide'])<br />
         print(res)
-        </div>	
+        </div>
+		<p>
+			<b>Alignments</b>: Alignments represent a popular conformance checking algorithm. In this case,
+			the best match between the process execution and the model (according to a cost function) is found
+			by examining the search space using a Dijkstra search.
+			Alignments are usually computationally expensive and require lots of memory.
+			Despite that, in MicroPM4Py we offer a memory-efficient implementation that is able to align optimally
+			small logs and models. An example application of alignments is the following. Suppose to start with
+			the running-example log and the Petri net model that are found inside the <b>micro_tests</b> folder.
+			Let's import the Petri net model and an iterator from the log.
+		</p>
+		        <div style="background-color: black; color: white; width: 100%">
+from micropm4py.log import xes_import_traces_file<br />
+from micropm4py.petrinet import petrinet_import_file<br />
+log_path = "running-example.xes"<br />
+model_path = "running-example.pnml"<br />
+net, im, fm = petrinet_import_file.imp_file(model_path)<br />
+it = xes_import_traces_file.get_it_from_file(log_path) <br />
+nxt = xes_import_traces_file.get_nxt_trace(it)
+				</div>
+		<p>Alignments are then applied provided the trace and the Petri net model:</p>
+		<div style="background-color: black; color: white; width: 100%">
+from micropm4py.petrinet import alignments<br />
+print(alignments.apply(nxt, net, im, fm))
+		</div>
+		<p>The result of the application of alignments of such trace against the model is the following:</p>
+		<div style="background-color: black; color: white; width: 100%">
+			{'alignment': [('register request', 'register request'), ('examine casually', 'examine casually'), ('check ticket', 'check ticket'), ('decide', 'decide'), ('reinitiate request', 'reinitiate request'), ('examine thoroughly', 'examine thoroughly'), ('check ticket', 'check ticket'), ('decide', 'decide'), ('pay compensation', 'pay compensation')], 'cost': 0, 'queued_states': 18, 'visited_states': 10, 'closed_set_length': 5, 'num_visited_markings': 7}
+		</div>
+		<p>So, we got a list of moves. For each move, the first item refers to what happens at the trace level,
+		the sercond item refers to what happens at the model level. In this case, we have all sync moves.
+		This means that the trace and the model are perfectly corresponding. Hence, the cost of this alignment
+		is 0 (no deviation happened).</p>
 	</div>
 	<br />
 	<div id="discovery">
