@@ -1,14 +1,14 @@
+net = ((0, 0, 0, 0, 0, 0, 0), (('decide', (5, 2), (4,)), ('examine casually', (6,), (2,)), ('examine thoroughly', (6,), (2,)), ('register request', (0,), (1, 6)), ('check ticket', (1,), (5,)), ('reinitiate request', (4,), (6, 1)), ('pay compensation', (4,), (3,)), ('reject request', (4,), (3,))))
+im = {0: 1}
+fm = {3: 1}
+
 from micropm4py.log import xes_import_traces_file_minimal
-from micropm4py.petrinet import petrinet_import_file
 from micropm4py.petrinet import petrinet_exec
 from micropm4py.util import copy
 
-
 log_path = "running-example.xes"
-model_path = "running-example.pnml"
 
 # reads the Petri net model
-net, im, fm = petrinet_import_file.imp_file(model_path)
 # creates an iterator from the log: a single trace is fetched per time
 it = xes_import_traces_file_minimal.get_it_from_file(log_path)
 # let's pick the first trace
