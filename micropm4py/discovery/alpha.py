@@ -81,7 +81,8 @@ def cont(tup1, tup2):
 
 def alpha(dfg):
     c = causal(dfg)
-    net = [["source", "sink"], []]
+    x = 0
+    net = [[x, x], []]
     im = {0: 1}
     fm = {1: 1}
     pls = []
@@ -130,8 +131,9 @@ def alpha(dfg):
             i = i + 1
     i = 0
     while i < len(pls):
-        net[0].append("p%d" % i)
+        net[0].append(x)
         i = i + 1
+    net[0] = tuple(net[0])
     i = 0
     while i < len(dfg[0]):
         tr = [dfg[0][i], [], []]
@@ -151,7 +153,6 @@ def alpha(dfg):
         tr = tuple(tr)
         net[1].append(tr)
         i = i + 1
-    net[0] = tuple(net[0])
     net[1] = tuple(net[1])
     net = tuple(net)
     return net, im, fm
