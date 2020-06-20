@@ -13,3 +13,9 @@ from micropm4py.discovery import alpha
 
 net, im, fm = alpha.alpha(dfg)
 print(net)
+
+del dfg
+gc.collect()
+
+from micropm4py.visualization import petri_print
+petri_print.print_dot(net)
