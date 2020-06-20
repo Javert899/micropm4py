@@ -1,6 +1,3 @@
-import time
-
-# RAN ON CORTEX M3, 64kb RAM
 def apply(dfg):
     n = [[], []]
     im = {}
@@ -17,19 +14,5 @@ def apply(dfg):
     n[1] = tuple(n[1])
     im[len(n[0])-1] = 1
     fm[list(dfg[3])[0]] = 1
+    n = tuple(n)
     return n, im, fm
-
-
-def main():
-    dfg = [("A", "B", "C"), {0:1, 1:1, 2:1}, tuple({0}), tuple({2}), {(0, 1): 1, (1, 2): 1}]
-    n, im, fm = apply(dfg)
-    print(n)
-    print(im)
-    print(fm)
-
-
-if __name__ == "__main__":
-    aa = time.ticks_ms()
-    main()
-    bb = time.ticks_ms()
-    print(bb-aa)

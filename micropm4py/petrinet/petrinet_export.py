@@ -1,7 +1,3 @@
-import time
-
-# RAN ON CORTEX M3, 64kb RAM
-# Supports only visible transitions, and with arc weight equal to 1. Supports duplicate transitions.
 def export(net, im, fm):
     print("<?xml version='1.0' encoding='UTF-8'?>")
     print("<pnml>")
@@ -45,15 +41,3 @@ def export(net, im, fm):
     print("</finalmarkings>")
     print("</net>")
     print("</pnml>")
-
-
-def main():
-    p = [("source", "p1", "sink"), (("A", (0,), (1,)), ("B", (1,), (2,)))]
-    export(p, {0: 1}, {2: 1})
-
-
-if __name__ == "__main__":
-    aa = time.ticks_ms()
-    main()
-    bb = time.ticks_ms()
-    print(bb-aa)

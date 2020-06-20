@@ -41,18 +41,3 @@ def getv(mu, sig):
     v1 = gen()
     v2 = gen()
     return mu + sig*math.cos(2*math.pi*v2)*math.sqrt(-2.0*math.log(v1))
-
-
-def main():
-    print(erf(0.5))
-    print(cdf(0.0, 0.0, 1.0))
-    print(pdf(0.0, 0.0, 1.0))
-    print("")
-    i = 0
-    while i < 10:
-        print(getv(0.0, 1.0))
-        i = i + 1
-
-
-if __name__ == "__main__":
-    main()

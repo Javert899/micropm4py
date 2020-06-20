@@ -1,8 +1,3 @@
-import time
-
-# RAN ON CORTEX M3, 64kb RAM
-
-
 def print_dot(net):
     print("digraph graphname {")
     i = 0
@@ -21,15 +16,3 @@ def print_dot(net):
             print("t%d -> p%d;" % (i, p))
         i = i + 1
     print("}")
-
-
-def main():
-    p = [("source", "p1", "sink"), (("A", {0: 1}, {1: 1}), ("B", {1: 1}, {2: 1}))]
-    print_dot(p)
-
-
-if __name__ == "__main__":
-    aa = time.ticks_ms()
-    main()
-    bb = time.ticks_ms()
-    print(bb-aa)

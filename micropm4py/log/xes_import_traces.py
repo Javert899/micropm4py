@@ -1,6 +1,3 @@
-import time
-
-# RAN ON CORTEX M3, 64kb RAM
 def r(tr, p, on, row, d):
     if on == 2:
         if "concept:name" in row:
@@ -65,48 +62,3 @@ def udf_sten(dfg, tr):
         dfg[2].add(dfg[0].index(tr[0]))
         dfg[3].add(dfg[0].index(tr[-1]))
     return dfg
-
-def main():
-    tr = None
-    p = None
-    on = 0
-    dfg = [[], dict(), set(), set(), dict()]
-    d = {}
-    tr, p, on = r(tr, p, on, "<?xml version='1.0' encoding='UTF-8'?>", d)
-    tr, p, on = r(tr, p, on, "<log>", d)
-    tr, p, on = r(tr, p, on, "\t<trace>", d)
-    tr, p, on = r(tr, p, on, "\t\t<string key=\"concept:name\" value=\"ciao\" />", d)
-    tr, p, on = r(tr, p, on, "\t\t<event>", d)
-    tr, p, on = r(tr, p, on, "\t\t\t<string key=\"concept:name\" value=\"A\" />", d)
-    tr, p, on = r(tr, p, on, "\t\t</event>", d)
-    tr, p, on = r(tr, p, on, "\t\t<event>", d)
-    tr, p, on = r(tr, p, on, "\t\t\t<string key=\"concept:name\" value=\"B\" />", d)
-    tr, p, on = r(tr, p, on, "\t\t</event>", d)
-    tr, p, on = r(tr, p, on, "\t\t<event>", d)
-    tr, p, on = r(tr, p, on, "\t\t\t<string key=\"concept:name\" value=\"C\" />", d)
-    tr, p, on = r(tr, p, on, "\t\t</event>", d)
-    tr, p, on = r(tr, p, on, "\t</trace>", d)
-    print(tr)
-    dfg = udf_sten(dfg, tr[1])
-    tr, p, on = r(tr, p, on, "\t<trace>", d)
-    tr, p, on = r(tr, p, on, "\t\t<event>", d)
-    tr, p, on = r(tr, p, on, "\t\t\t<string key=\"concept:name\" value=\"A\" />", d)
-    tr, p, on = r(tr, p, on, "\t\t</event>", d)
-    tr, p, on = r(tr, p, on, "\t\t<event>", d)
-    tr, p, on = r(tr, p, on, "\t\t\t<string key=\"concept:name\" value=\"B\" />", d)
-    tr, p, on = r(tr, p, on, "\t\t</event>", d)
-    tr, p, on = r(tr, p, on, "\t</trace>", d)
-    print(tr)
-    dfg = udf_sten(dfg, tr[1])
-    dfg[0] = tuple(dfg[0])
-    dfg[2] = tuple(dfg[2])
-    dfg[3] = tuple(dfg[3])
-    tr, p, on = r(tr, p, on, "</log>", d)
-    print(dfg)
-
-
-if __name__ == "__main__":
-    aa = time.ticks_ms()
-    main()
-    bb = time.ticks_ms()
-    print(bb-aa)

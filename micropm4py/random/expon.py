@@ -23,18 +23,3 @@ def cdf(x, lam):
 
 def getv(lam):
     return -1.0/lam*math.log(1.0 - gen())
-
-
-def main():
-    print("pdf")
-    print(pdf(1.0, 1.0))
-    print("cdf")
-    print(cdf(1.0, 1.0))
-    i = 0
-    while i < 10:
-        print(getv(1.0/10.0))
-        i = i + 1
-
-
-if __name__ == "__main__":
-    main()

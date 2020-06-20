@@ -1,6 +1,3 @@
-import time
-
-# RAN ON CORTEX M3, 64kb RAM
 def exec(p, m, a):
     for t in p[1]:
         if t[0] == a:
@@ -27,16 +24,3 @@ def ex_trace(p, m, fm, tr):
         if m is None:
             return False
     return m == fm
-
-
-def main():
-    p = [("source", "p1", "sink"), (("A", (0,), (1,)), ("B", (1,), (2,)))]
-    r = ex_trace(p, {0: 1}, {2: 1}, ("A", "B"))
-    print(r)
-
-
-if __name__ == "__main__":
-    aa = time.ticks_ms()
-    main()
-    bb = time.ticks_ms()
-    print(bb-aa)

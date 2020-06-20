@@ -1,6 +1,3 @@
-import time
-
-# RAN ON CORTEX M3, 64kb RAM
 def import_header(l, sep, ci, ai):
     l = l.split(sep)
     cidp = -1
@@ -93,49 +90,3 @@ def finish_dfg_sten(dfg, d):
         dfg[4][tup] = dfg[4][tup] + 1
         dfg[1][1] = dfg[1][1] + 1
     return dfg
-
-
-def main():
-    cidp, acp = import_header("case:concept:name,concept:name", ",", "case:concept:name", "concept:name")
-    d = {}
-    da = {}
-    d = import_traces(d, "1,A", ",", cidp, acp, da)
-    d = import_traces(d, "2,A", ",", cidp, acp, da)
-    d = import_traces(d, "1,B", ",", cidp, acp, da)
-    d = import_traces(d, "2,B", ",", cidp, acp, da)
-    d = import_traces(d, "1,C", ",", cidp, acp, da)
-    d = finish_traces(d)
-    print(d)
-
-
-def main2():
-    cidp, acp = import_header("case:concept:name,concept:name", ",", "case:concept:name", "concept:name")
-    dfg = [[], dict(), set(), set(), dict()]
-    d = {}
-    dfg, d = import_dfg(dfg, d, "1,A", ",", cidp, acp)
-    dfg, d = import_dfg(dfg, d, "2,A", ",", cidp, acp)
-    dfg, d = import_dfg(dfg, d, "1,B", ",", cidp, acp)
-    dfg, d = import_dfg(dfg, d, "2,B", ",", cidp, acp)
-    dfg, d = import_dfg(dfg, d, "1,C", ",", cidp, acp)
-    dfg = finish_dfg(dfg, d)
-    print(dfg)
-
-
-def main3():
-    cidp, acp = import_header("case:concept:name,concept:name", ",", "case:concept:name", "concept:name")
-    dfg = [[">>", "[]"], {0: 0, 1: 0}, {0}, {1}, dict()]
-    d = {}
-    dfg, d = import_dfg_sten(dfg, d, "1,A", ",", cidp, acp)
-    dfg, d = import_dfg_sten(dfg, d, "2,A", ",", cidp, acp)
-    dfg, d = import_dfg_sten(dfg, d, "1,B", ",", cidp, acp)
-    dfg, d = import_dfg_sten(dfg, d, "2,B", ",", cidp, acp)
-    dfg, d = import_dfg_sten(dfg, d, "1,C", ",", cidp, acp)
-    dfg = finish_dfg_sten(dfg, d)
-    print(dfg)
-
-
-if __name__ == "__main__":
-    aa = time.ticks_ms()
-    main3()
-    bb = time.ticks_ms()
-    print(bb-aa)
