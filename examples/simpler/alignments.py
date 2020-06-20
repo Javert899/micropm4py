@@ -14,6 +14,6 @@ it = xes_import_traces_file.get_it_from_file(log_path)
 nxt = xes_import_traces_file.get_nxt_trace(it)
 while nxt:
     # performs the alignments operation and print the alignment
-    print(alignments.apply(nxt[1], net, im, fm))
+    print(alignments.apply(nxt, net, im, fm))
     # let's pick the next trace
     nxt = xes_import_traces_file.get_nxt_trace(it)
