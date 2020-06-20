@@ -9,7 +9,7 @@ def export(net, im, fm, file_path):
     while i < len(net[0]):
         F.write("<place id=\"pl%d\">\n" % (i))
         F.write("<name>\n")
-        F.write("<text>%s</text>\n" % (net[0][i]))
+        F.write("<text>%s</text>\n" % (i))
         F.write("</name>\n")
         if i in im:
             F.write("<initialMarking>\n")

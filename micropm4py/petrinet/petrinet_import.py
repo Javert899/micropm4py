@@ -53,6 +53,14 @@ def ip(n, im, fm, st, row):
 
 
 def finish_net(n, st):
+    #n[0] = tuple(n[0])
+    lenn = len(n[0])
+    n[0] = []
+    x = 0
+    i = 0
+    while i < lenn:
+        n[0].append(x)
+        i = i + 1
     n[0] = tuple(n[0])
     i = 0
     while i < len(n[1]):
@@ -62,6 +70,7 @@ def finish_net(n, st):
         n[1][i] = tuple(n[1][i])
         i = i + 1
     n[1] = tuple(n[1])
+    n = tuple(n)
 
 
 def main():

@@ -11,7 +11,7 @@ def export(net, im, fm):
     while i < len(net[0]):
         print("<place id=\"pl%d\">" % (i))
         print("<name>")
-        print("<text>%s</text>" % (net[0][i]))
+        print("<text>%s</text>" % (i))
         print("</name>")
         if i in im:
             print("<initialMarking>")
