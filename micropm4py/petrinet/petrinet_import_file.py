@@ -14,4 +14,5 @@ def imp_file(file_path):
         line = F.readline()
     F.close()
     petrinet_import.finish_net(n, st)
+    n = tuple(n)
     return n, im, fm

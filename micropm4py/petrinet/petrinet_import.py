@@ -70,7 +70,6 @@ def finish_net(n, st):
         n[1][i] = tuple(n[1][i])
         i = i + 1
     n[1] = tuple(n[1])
-    n = tuple(n)
 
 
 def main():
