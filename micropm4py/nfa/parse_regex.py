@@ -21,7 +21,6 @@ def parse(regex):
             left_connection.append(len(edges)-2)
             right_connection.append(len(edges)-1)
             edges[left_connection[level-1]].append((left_connection[level], None))
-            edges[right_connection[level]].append((right_connection[level-1], None))
         elif regex[i] == ")":
             level = level - 1
             left_connection[level] = right_connection[level]
@@ -29,36 +28,36 @@ def parse(regex):
             nodes_levels.append(level)
             right_connection[level] = len(edges) - 1
             if i < len(regex)-1 and regex[i+1] == "?":
-                edges[start_level[level+1]].append((left_connection[level+1], None))
+                edges[start_level[level+1]].append((right_connection[level+1], None))
                 i = i + 1
             elif i < len(regex)-1 and regex[i+1] == "*":
-                edges[start_level[level+1]].append((left_connection[level+1], None))
-                edges[left_connection[level+1]].append((start_level[level+1], None))
+                edges[start_level[level+1]].append((right_connection[level+1], None))
+                edges[right_connection[level+1]].append((start_level[level+1], None))
                 i = i + 1
             elif i < len(regex)-1 and regex[i+1] == "+":
-                edges[left_connection[level+1]].append((start_level[level+1], None))
+                edges[right_connection[level+1]].append((start_level[level+1], None))
                 i = i + 1
             if (right_connection[level+1], None) not in edges[left_connection[level+1]]:
                 edges[left_connection[level+1]].append((right_connection[level+1], None))
+            edges[right_connection[level+1]].append((right_connection[level], None))
             del left_connection[level+1]
             del right_connection[level+1]
         else:
             if not regex[i] in ("|", "?", "*", "+"):
                 edges[left_connection[level]].append((right_connection[level], regex[i]))
                 if i < len(regex)-1 and not regex[i+1] == "|":
-                    print(regex[i], regex[i+1])
                     edges.append([])
                     nodes_levels.append(level)
                     start_level[level] = left_connection[level]
                     left_connection[level] = right_connection[level]
                     right_connection[level] = len(edges)-1
             elif regex[i] == "?":
-                edges[start_level[level]].append((left_connection[level], None))
+                edges[start_level[level]].append((right_connection[level], None))
             elif regex[i] == "*":
-                edges[start_level[level]].append((left_connection[level], None))
-                edges[left_connection[level]].append((start_level[level], None))
+                edges[start_level[level]].append((right_connection[level], None))
+                edges[right_connection[level]].append((start_level[level], None))
             elif regex[i] == "+":
-                edges[left_connection[level]].append((start_level[level], None))
+                edges[right_connection[level]].append((start_level[level], None))
         i = i + 1
 
     if (right_connection[0], None) not in edges[left_connection[0]]:
@@ -86,7 +85,7 @@ def view_gg(gg):
 
     return viz.view(cleanup=True)
 
-gg, start_node, end_node = parse(" a(b|(c|(de)))+f* ")
+gg, start_node, end_node = parse(" a(b|(c|(de)))*f ")
 #gg, start_node, end_node = parse(" abcdefg* ")
 view_gg(gg)
 print(len(gg))
