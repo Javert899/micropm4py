@@ -37,15 +37,23 @@ def parse(regex):
             elif i < len(regex)-1 and regex[i+1] == "+":
                 edges[right_connection[level+1]].append((start_level[level+1], None))
                 i = i + 1
-            if (right_connection[level+1], None) not in edges[left_connection[level+1]]:
+            j = 0
+            found = False
+            while j < len(edges[left_connection[level+1]]):
+                if edges[left_connection[level+1]][j][0] == right_connection[level+1]:
+                    found = True
+                    break
+                j = j + 1
+            if not found:
                 edges[left_connection[level+1]].append((right_connection[level+1], None))
             edges[right_connection[level+1]].append((right_connection[level], None))
             del left_connection[level+1]
             del right_connection[level+1]
+            #left_connection[level] = right_connection[level]
         else:
             if not regex[i] in ("|", "?", "*", "+"):
                 edges[left_connection[level]].append((right_connection[level], regex[i]))
-                if i < len(regex)-1 and not regex[i+1] == "|":
+                if i == len(regex)-1 or (i < len(regex)-1 and not regex[i+1] == "|"):
                     edges.append([])
                     nodes_levels.append(level)
                     start_level[level] = left_connection[level]
@@ -60,8 +68,17 @@ def parse(regex):
                 edges[right_connection[level]].append((start_level[level], None))
         i = i + 1
 
-    if (right_connection[0], None) not in edges[left_connection[0]]:
+    j = 0
+    found = False
+    while j < len(edges[left_connection[0]]):
+        if edges[left_connection[0]][j][0] == right_connection[0]:
+            found = True
+            break
+        j = j + 1
+
+    if not found:
         edges[left_connection[0]].append((right_connection[0], None))
+        pass
 
     return edges, 0, right_connection[0]
 
