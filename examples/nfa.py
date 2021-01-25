@@ -1,13 +1,8 @@
-from micropm4py.nfa import parse_regex, semantics
+from micropm4py.nfa import parse_regex
 
+nfa = parse_regex.parse("^a?b.((def)+|(ghi)*)*lm$")
+del parse_regex
 
-def main():
-    nfa = parse_regex.parse("^a?b.((def)+|(ghi)*)*lm$")
-    reach_start = semantics.reachable_invisible(nfa, 0)
-    en_trans = semantics.enabled_transitions(nfa, {0})
-    print(en_trans)
-    print(semantics.accept(nfa, {0}, "abzdefdefghideflm"))
+from micropm4py.nfa import semantics
 
-
-if __name__ == "__main__":
-    main()
+print(semantics.accept(nfa, {0}, "abzdefdefghideflm"))
