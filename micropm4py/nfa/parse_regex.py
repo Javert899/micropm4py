@@ -1,86 +1,85 @@
 def parse(regex):
-    regex = regex[1:-1]
-    level = 0
-    left_connection = [0]
-    right_connection = [1]
-    start_level = [0]
+    tokens = [(regex.index("^")+1, regex.index("$")-1, 0, 1)]
     edges = [[], []]
-    nodes_levels = [0, 0]
-    i = 0
-    while i < len(regex):
-        if regex[i] == "(":
-            level = level + 1
-            edges.append([])
-            edges.append([])
-            nodes_levels.append(level)
-            nodes_levels.append(level)
-            if len(start_level) < level + 1:
-                start_level.append(len(edges)-2)
+    while tokens:
+        token = tokens.pop(0)
+        if regex[token[1]] in ("*", "+", "?"):
+            if regex[token[1]-1] == ")":
+                tokens.append((token[0]+1, token[1]-2, token[2], token[3]))
             else:
-                start_level[level] = len(edges)-2
-            left_connection.append(len(edges)-2)
-            right_connection.append(len(edges)-1)
-            edges[left_connection[level-1]].append((left_connection[level], None))
-        elif regex[i] == ")":
-            level = level - 1
-            left_connection[level] = right_connection[level]
-            edges.append([])
-            nodes_levels.append(level)
-            right_connection[level] = len(edges) - 1
-            if i < len(regex)-1 and regex[i+1] == "?":
-                edges[start_level[level+1]].append((right_connection[level+1], None))
-                i = i + 1
-            elif i < len(regex)-1 and regex[i+1] == "*":
-                edges[start_level[level+1]].append((right_connection[level+1], None))
-                edges[right_connection[level+1]].append((start_level[level+1], None))
-                i = i + 1
-            elif i < len(regex)-1 and regex[i+1] == "+":
-                edges[right_connection[level+1]].append((start_level[level+1], None))
-                i = i + 1
-            j = 0
-            found = False
-            while j < len(edges[left_connection[level+1]]):
-                if edges[left_connection[level+1]][j][0] == right_connection[level+1]:
-                    found = True
-                    break
-                j = j + 1
-            if not found:
-                edges[left_connection[level+1]].append((right_connection[level+1], None))
-            edges[right_connection[level+1]].append((right_connection[level], None))
-            del left_connection[level+1]
-            del right_connection[level+1]
-            #left_connection[level] = right_connection[level]
+                tokens.append((token[0], token[1]-1, token[2], token[3]))
+            if regex[token[1]] in ("*", "+"):
+                edges[token[3]].append((token[2], None))
+            if regex[token[1]] in ("*", "?"):
+                edges[token[2]].append((token[3], None))
+        elif token[1] - token[0] == 0:
+            edges[token[2]].append((token[3], regex[token[0]]))
         else:
-            if not regex[i] in ("|", "?", "*", "+"):
-                edges[left_connection[level]].append((right_connection[level], regex[i]))
-                if i == len(regex)-1 or (i < len(regex)-1 and not regex[i+1] == "|"):
-                    edges.append([])
-                    nodes_levels.append(level)
-                    start_level[level] = left_connection[level]
-                    left_connection[level] = right_connection[level]
-                    right_connection[level] = len(edges)-1
-            elif regex[i] == "?":
-                edges[start_level[level]].append((right_connection[level], None))
-            elif regex[i] == "*":
-                edges[start_level[level]].append((right_connection[level], None))
-                edges[right_connection[level]].append((start_level[level], None))
-            elif regex[i] == "+":
-                edges[right_connection[level]].append((start_level[level], None))
-        i = i + 1
-
-    j = 0
-    found = False
-    while j < len(edges[left_connection[0]]):
-        if edges[left_connection[0]][j][0] == right_connection[0]:
-            found = True
-            break
-        j = j + 1
-
-    if not found:
-        edges[left_connection[0]].append((right_connection[0], None))
-        pass
-
-    return edges, 0, right_connection[0]
+            subtokens = []
+            conjtype = [0]
+            i = token[0]
+            while i <= token[1]:
+                if regex[i] == "|":
+                    conjtype[-1] = 1
+                elif regex[i] == "(":
+                    par_lev = 1
+                    z = i + 1
+                    while z <= token[1]:
+                        if regex[z] == "(":
+                            par_lev = par_lev + 1
+                        elif regex[z] == ")":
+                            par_lev = par_lev - 1
+                            if par_lev == 0:
+                                if z < token[1] and regex[z+1] in ("*", "+", "?"):
+                                    left = i
+                                    right = z+1
+                                else:
+                                    left = i+1
+                                    right = z-1
+                                if conjtype[-1] == 0:
+                                    if not subtokens:
+                                        subtokens.append([left, right, token[2], None])
+                                    else:
+                                        edges.append([])
+                                        j = len(subtokens) - 1
+                                        while j >= 0:
+                                            if subtokens[j][3] is None:
+                                                subtokens[j][3] = len(edges) - 1
+                                            subtokens[j] = tuple(subtokens[j])
+                                            j = j - 1
+                                        subtokens.append([left, right, subtokens[-1][3], None])
+                                elif conjtype[-1] == 1:
+                                    subtokens.append([left, right, subtokens[-1][2], None])
+                                conjtype.append(0)
+                        z = z + 1
+                    i = z
+                else:
+                    if conjtype[-1] == 0:
+                        if not subtokens:
+                            subtokens.append([i, i, token[2], None])
+                        else:
+                            edges.append([])
+                            j = len(subtokens)-1
+                            while j >= 0:
+                                if subtokens[j][3] is None:
+                                    subtokens[j][3] = len(edges)-1
+                                subtokens[j] = tuple(subtokens[j])
+                                j = j - 1
+                            subtokens.append([i, i, subtokens[-1][3], None])
+                    elif conjtype[-1] == 1:
+                        subtokens.append([i, i, subtokens[-1][2], None])
+                    conjtype.append(0)
+                i = i + 1
+            j = len(subtokens)-1
+            while j >= 0:
+                if subtokens[j][3] is None:
+                    subtokens[j][3] = token[3]
+                subtokens[j] = tuple(subtokens[j])
+                j = j - 1
+            while subtokens:
+                subt = subtokens.pop(0)
+                tokens.append(subt)
+    return edges
 
 
 def view_gg(gg):
@@ -102,9 +101,7 @@ def view_gg(gg):
 
     return viz.view(cleanup=True)
 
-gg, start_node, end_node = parse(" a(b|(c|(de)))*f ")
-#gg, start_node, end_node = parse(" abcdefg* ")
+#gg = parse("^adefgb|c$")
+gg = parse("^(abc)+$")
+print(gg)
 view_gg(gg)
-print(len(gg))
-print(start_node)
-print(end_node)
