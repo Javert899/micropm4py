@@ -43,10 +43,10 @@ def parse(regex):
                                             if j in opmem:
                                                 if opmem[j] in ("*", "+"):
                                                     if not [subtokens[j][2], None] in nfa[subtokens[j][3]]:
-                                                        nfa[subtokens[j][3]].append([subtokens[j][2], None])
+                                                        nfa[subtokens[j][3]].append((subtokens[j][2], None))
                                                 if opmem[j] in ("*", "?"):
                                                     if not [subtokens[j][3], None] in nfa[subtokens[j][2]]:
-                                                        nfa[subtokens[j][2]].append([subtokens[j][3], None])
+                                                        nfa[subtokens[j][2]].append((subtokens[j][3], None))
                                                 del opmem[j]
                                             subtokens[j] = tuple(subtokens[j])
                                             j = j - 1
@@ -71,10 +71,10 @@ def parse(regex):
                                 if j in opmem:
                                     if opmem[j] in ("*", "+"):
                                         if not [subtokens[j][2], None] in nfa[subtokens[j][3]]:
-                                            nfa[subtokens[j][3]].append([subtokens[j][2], None])
+                                            nfa[subtokens[j][3]].append((subtokens[j][2], None))
                                     if opmem[j] in ("*", "?"):
                                         if not [subtokens[j][3], None] in nfa[subtokens[j][2]]:
-                                            nfa[subtokens[j][2]].append([subtokens[j][3], None])
+                                            nfa[subtokens[j][2]].append((subtokens[j][3], None))
                                     del opmem[j]
                                 subtokens[j] = tuple(subtokens[j])
                                 j = j - 1
@@ -92,10 +92,10 @@ def parse(regex):
             for j in opmem:
                 if opmem[j] in ("*", "+"):
                     if not [subtokens[j][2], None] in nfa[subtokens[j][3]]:
-                        nfa[subtokens[j][3]].append([subtokens[j][2], None])
+                        nfa[subtokens[j][3]].append((subtokens[j][2], None))
                 if opmem[j] in ("*", "?"):
                     if not [subtokens[j][3], None] in nfa[subtokens[j][2]]:
-                        nfa[subtokens[j][2]].append([subtokens[j][3], None])
+                        nfa[subtokens[j][2]].append((subtokens[j][3], None))
             while subtokens:
                 subt = subtokens.pop(0)
                 tokens.append(subt)
@@ -105,4 +105,3 @@ def parse(regex):
         i = i + 1
     nfa = tuple(nfa)
     return nfa
-
