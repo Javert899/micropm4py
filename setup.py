@@ -12,7 +12,7 @@ def read_file(filename):
 
 setup(
     name=micropm4py.__name__,
-    version="0.2.1",
+    version="0.2.2",
     description="MicroPM4Py - Process Mining for Micro-Controllers".strip(),
     long_description=read_file('README.md'),
     author="Alessandro Berti",
@@ -20,7 +20,7 @@ setup(
     py_modules=[micropm4py.__name__],
     include_package_data=True,
     packages=['micropm4py', 'micropm4py.log', 'micropm4py.util', 'micropm4py.petrinet', 'micropm4py.random', 'micropm4py.discovery',
-              'micropm4py.conversion', 'micropm4py.conversion.dfg', 'micropm4py.conversion.pm4py', 'micropm4py.visualization'],
+              'micropm4py.conversion', 'micropm4py.conversion.dfg', 'micropm4py.conversion.pm4py', 'micropm4py.visualization', 'micropm4py.nfa'],
     url='http://www.pm4py.org',
     license='GPL 3.0',
     install_requires=[
